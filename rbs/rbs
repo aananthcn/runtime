@@ -24,11 +24,13 @@ def get_package_type(pkgd):
         print("RBS Error: Unknown package type found %s" % (pkgd))
         exit(-1)
 
+
 def command_check(cmd):
     if cmd in supported_commands:
         return True
     else:
         return False
+
 
 def out_folder_paths(domain, pwd):
     out_dir = pwd + "/out/" + domain
@@ -53,92 +55,6 @@ def prepare_env_n_dir(conf, domain):
 
 
 
-def get_cmake_config_list(env, domain):
-    out_dir = env["OUT_DIR"]
-    inst_arg = "-DCMAKE_INSTALL_PREFIX:PATH="+out_dir
-    if domain == "Linux":
-        cfg_list = ["cmake", inst_arg, ".."]
-    elif domain == "QNX":
-        c_arg = "-DCMAKE_C_COMPILER="+rbs_conf["toolchain"][domain]["prefix"]+"gcc"
-        cpp_arg = "-DCMAKE_CXX_COMPILER="+rbs_conf["toolchain"][domain]["prefix"]+"g++"
-        find_arg = "-DCMAKE_FIND_ROOT_PATH="+out_dir
-        cfg_list = ["cmake", inst_arg, c_arg, cpp_arg, find_arg, ".."]
-        print(cfg_list)
-    else:
-        print("RBS Error: invalid domain - get_cmake_config_list()!")
-        exit(-1)
-
-    return cfg_list
-
-
-
-def config_package(conf, env, pkg, pkgt):
-    print("configure " + pkg)
-    outstr = ""
-    if pkgt == "makefile":
-        return # do nothing
-    if pkgt == "boost":
-        pkgd = conf["packages"]["path"]+"/"+pkg
-        outd = env["OUT_DIR"]
-        #./bootstrap.sh --prefix=../../out/QNX/
-        outstr = subprocess.run(["./bootstrap.sh", "--prefix="+outd], stdout=subprocess.PIPE, env=env, cwd=pkgd)
-    elif pkgt == "cmake":
-        pkgd = conf["packages"]["path"]+"/"+pkg
-        domain = env["DOMAIN"]
-        cfg_list = get_cmake_config_list(env, domain)
-        build_dir = env["PWD"]+"/"+pkgd+"/build-"+domain
-
-        subprocess.run(["mkdir", "-p", build_dir], stdout=subprocess.PIPE, env=env)
-        outstr = subprocess.run(cfg_list, stdout=subprocess.PIPE, env=env, cwd=build_dir).stdout.decode('utf-8')
-    else:
-        print("RBS Error: invalid package to configure!")
-        exit(-1)
-    print(outstr)
-
-
-def compile_package(conf, env, pkg, pkgt):
-    print("compiling RBS package: %s" % (pkg))
-    pkgd = conf["packages"]["path"]+"/"+pkg
-    if pkgt == "makefile":
-        outstr = subprocess.run(["make", "-C", pkgd], stdout=subprocess.PIPE, env=env).stdout.decode('utf-8')
-    elif pkgt == "boost":
-        if env["DOMAIN"] == "QNX":
-            print("Note: file '/opt/qnx700/host/linux/x86_64/etc/qcc/gcc/5.4.0/default' should be configured to get right results!!")
-        #./b2 -j8 install -d2+2 link=shared address-model=64 architecture=x86 threadapi=pthread binary-format=elf toolset=qcc
-        # cxxflags="-Vgcc_ntox86_64_gpp -shared -std=gnu++0x -lang-c++ -fexceptions" linkflags="-Vgcc_ntox86_64_gpp -std=gnu++0x
-        # -fexceptions" archiveflags="-Vgcc_ntox86_64_gpp" target-os=qnxnto --without-python --without-context --without-coroutine
-        outstr = subprocess.run('./b2 -j8 install -d2+2 link=shared address-model=64 architecture=x86 threadapi=pthread '
-        + 'abi=aapcs binary-format=elf toolset=qcc cxxflags="-Vgcc_ntox86_64_gpp -shared -std=gnu++0x -lang-c++ -fexceptions" '
-        + 'linkflags="-Vgcc_ntox86_64_gpp -std=gnu++0x -fexceptions" archiveflags="-Vgcc_ntox86_64_gpp" target-os=qnxnto '
-        + '--without-python --without-context --without-coroutine',
-        shell=True, check=True, env=env, cwd=pkgd, stdout=subprocess.PIPE).stdout.decode('utf-8')
-    elif pkgt == "cmake":
-        build_dir = env["PWD"]+"/"+pkgd+"/build-"+env["DOMAIN"]
-        outstr = subprocess.run(["make", "-C", build_dir], stdout=subprocess.PIPE, env=env).stdout.decode('utf-8')
-    else:
-        print("RBS Error: invalid package to compile!")
-        exit(-1)
-    print(outstr)
-
-
-def run_package(conf, env, pkg, pkgt, cmd):
-    print("Running RBS package: %s" % (pkg))
-    pkgd = conf["packages"]["path"]+"/"+pkg
-    if pkgt == "makefile":
-        outstr = subprocess.run(["make", cmd, "-C", pkgd], stdout=subprocess.PIPE, env=env).stdout.decode('utf-8')
-    print(outstr)
-
-
-def install_package(conf, env, pkg, pkgt):
-    print("Installing RBS package: %s" % (pkg))
-    pkgd = conf["packages"]["path"]+"/"+pkg
-    if pkgt == "makefile":
-        outstr = subprocess.run(["make", "install", "-C", pkgd], stdout=subprocess.PIPE, env=env).stdout.decode('utf-8')
-    elif pkgt == "boost":
-        outstr = "Installation is part of compilation for boost type packages!"
-    print(outstr)
-
-
 def build_domain_packages(conf, domain, pkgs, cmd):
     print("\n\nRBS begins for %s..." % (domain))
     print("=" * (18+len(domain)))
@@ -152,16 +68,30 @@ def build_domain_packages(conf, domain, pkgs, cmd):
     # build packages for domain (QNX, Linux, ...)
     for pkg in pkgs:
         # identify package type
+        print("\nStarting package: " + pkg)
+        print("~" * (18+len(pkg)))
         pkgd = conf["packages"]["path"]+"/"+pkg
         pkgt = get_package_type(pkgd)
         print("Package type: " + pkgt)
 
-        if len(cmd) > 0:
-            run_package(conf, env, pkg, pkgt, cmd)
+        if pkgt == "makefile":
+            import makefile as rbs_mod
+        elif pkgt == "boost":
+            import boost as rbs_mod
+        elif pkgt == "cmake":
+            import cmake as rbs_mod
         else:
-            config_package(conf, env, pkg, pkgt)
-            compile_package(conf, env, pkg, pkgt)
-            install_package(conf, env, pkg, pkgt)
+            rbs_mod = None
+            print("RBS Error: unsupported Package Type identified!")
+            exit(-1)
+
+        # execute build steps...
+        if len(cmd) > 0:
+            rbs_mod.run_package(conf, env, pkg, cmd)
+        else:
+            rbs_mod.config_package(conf, env, pkg)
+            rbs_mod.compile_package(conf, env, pkg)
+            rbs_mod.install_package(conf, env, pkg)
 
 
 def build_packages(conf, pkgs, cmd):
