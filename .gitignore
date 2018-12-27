@@ -1,3 +1,8 @@
+out
+packages
+.idea
+
+
 # Prerequisites
 *.d
 
