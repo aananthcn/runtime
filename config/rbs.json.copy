@@ -1,0 +1,47 @@
+{
+	"title" : "Runtime Build System Configuration",
+	"version" : "0.0",
+	"domains" : ["QNX", "Linux"],
+	"toolchain" : {
+		"QNX" : {
+			"base" : "/opt/qnx700/",
+			"env": {
+				"QNX_BASE" : "/opt/qnx700",
+				"QNX_HOST" : "/opt/qnx700/host/linux/x86_64",
+				"QNX_TARGET" : "/opt/qnx700/target/qnx7",
+				"MAKEFLAGS" : "-I/opt/qnx700/target/qnx7/usr/include",
+				"LD_LIBRARY_PATH" : "",
+				"CC" : "x86_64-pc-nto-qnx7.0.0-gcc",
+				"LD" : "x86_64-pc-nto-qnx7.0.0-gcc"
+			},
+			"prefix" : "x86_64-pc-nto-qnx7.0.0-",
+			"path" : "/opt/qnx700/host/linux/x86_64/usr/bin"
+		},
+		"Linux" : {
+			"base" : "/",
+			"env" : {
+				"CC" : "gcc",
+				"LD" : "gcc"
+			},
+			"prefix" : "",
+			"path" : ""
+		}
+	},
+	"packages" : {
+		"path" : "./packages",
+		"list" : [
+			{
+				"pkg" : "hello-world",
+				"version" : "1.0"
+			},
+			{
+				"pkg" : "boost",
+				"version" : "1.65.0"
+			},
+			{
+				"pkg" : "vsomeip",
+				"version" : "2.10.21"
+			}
+		]
+	}
+}
