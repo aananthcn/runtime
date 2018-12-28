@@ -29,7 +29,7 @@ def compile_package(conf, env, pkg):
     print("\n$$ Compiling %s" % (pkg))
     pkgd = conf["packages"]["path"]+"/"+pkg
     build_dir = env["PWD"]+"/"+pkgd+"/build-"+env["DOMAIN"]
-    outstr = subprocess.run(["make", "-C", build_dir], stdout=subprocess.PIPE, env=env).stdout.decode('utf-8')
+    outstr = subprocess.run(["make", "-j8", "-C", build_dir], stdout=subprocess.PIPE, env=env).stdout.decode('utf-8')
     print(outstr)
 
 

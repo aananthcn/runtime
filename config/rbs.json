@@ -34,7 +34,7 @@
 					{
 						"pkg" : "vsomeip",
 						"version" : "2.10.21",
-						"patch" : ""
+						"patch" : "./patches/vsomeip/2.10.21/qnx"
 					}
 				]
 			}
