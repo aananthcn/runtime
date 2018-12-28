@@ -1,28 +1,65 @@
 diff -urN vsomeip-2.10.21/CMakeLists.txt vsomeip/CMakeLists.txt
 --- vsomeip-2.10.21/CMakeLists.txt	2018-05-22 15:26:47.000000000 +0530
-+++ vsomeip/CMakeLists.txt	2018-12-27 19:21:32.871114621 +0530
-@@ -77,6 +77,12 @@
++++ vsomeip/CMakeLists.txt	2018-12-28 17:27:09.336648683 +0530
+@@ -77,13 +77,19 @@
      set(OS_CXX_FLAGS "-pthread")
  endif (${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
  
 +if (${CMAKE_SYSTEM_NAME} MATCHES "QNX")
 +	set (OS "QNX")
 +	set (NO_DEPRECATED_REGISTER "")
-+	set (CMAKE_SKIP_BUILD_RPATH TRUE)
++#	set (CMAKE_SKIP_BUILD_RPATH TRUE)
 +endif (${CMAKE_SYSTEM_NAME} MATCHES "QNX")
 +
  # Signal handling
  if (ENABLE_SIGNAL_HANDLING)
  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DVSOMEIP_ENABLE_SIGNAL_HANDLING")
-@@ -166,6 +172,8 @@
+ endif ()
+ 
+ include_directories(
+-    "interface" 
++    "interface"
+ )
+ 
+ # Threads
+@@ -109,7 +115,7 @@
+ # DLT
+ find_package(PkgConfig)
+ pkg_check_modules(DLT "automotive-dlt >= 2.11")
+-IF(DLT_FOUND) 
++IF(DLT_FOUND)
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DUSE_DLT")
+ ENDIF(DLT_FOUND)
+ 
+@@ -166,6 +172,11 @@
      set(Boost_LIBRARIES "")
      link_directories(${Boost_LIBRARY_DIR_DEBUG})
      ADD_DEFINITIONS( -DBOOST_ALL_DYN_LINK )
 +elseif(${CMAKE_SYSTEM_NAME} MATCHES "QNX")
-+	set(USE_RT "")
++    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D${OS} ${OS_CXX_FLAGS} -g ${OPTIMIZE} -std=gnu++11 ${NO_DEPRECATED} ${EXPORTSYMBOLS}")
++	set(USE_RT "socket")
++    set(Boost_LIBRARIES boost_atomic boost_filesystem boost_math_c99f boost_prg_exec_monitor boost_stacktrace_basic boost_unit_test_framework boost_chrono boost_graph boost_math_c99l boost_program_options boost_stacktrace_noop boost_wave boost_container boost_iostreams boost_math_c99 boost_random boost_system boost_wserialization boost_context boost_locale boost_math_tr1f boost_regex boost_thread boost_date_time boost_log_setup boost_math_tr1l boost_serialization boost_timer boost_fiber boost_log boost_math_tr1 boost_signals boost_type_erasure)
++    link_directories(${CMAKE_FIND_ROOT_PATH}/lib)
  else()
      set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D${OS} ${OS_CXX_FLAGS} -DBOOST_LOG_DYN_LINK -g ${OPTIMIZE} -std=c++11 ${NO_DEPRECATED} ${EXPORTSYMBOLS}")
      set(USE_RT "rt")
+@@ -178,6 +189,7 @@
+ # them (which shouldn't be required). ${Boost_LIBRARIES} includes absolute
+ # build host paths as of writing, which also makes this important as it breaks
+ # the build.
++link_directories("${CMAKE_FIND_ROOT_PATH}/lib/")
+ target_link_libraries(vsomeip PRIVATE ${Boost_LIBRARIES} ${USE_RT} ${DL_LIBRARY} ${DLT_LIBRARIES} ${SystemD_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+ 
+ # Configuration library
+@@ -251,7 +263,7 @@
+ endforeach()
+ 
+ install (
+-    TARGETS vsomeip 
++    TARGETS vsomeip
+     # IMPORTANT: Add the vsomeip library to the "export-set"
+     EXPORT vsomeipTargets
+     RUNTIME DESTINATION "${INSTALL_BIN_DIR}" COMPONENT
 diff -urN vsomeip-2.10.21/implementation/endpoints/include/netlink_connector.hpp vsomeip/implementation/endpoints/include/netlink_connector.hpp
 --- vsomeip-2.10.21/implementation/endpoints/include/netlink_connector.hpp	2018-05-22 15:26:47.000000000 +0530
 +++ vsomeip/implementation/endpoints/include/netlink_connector.hpp	2018-12-28 07:21:19.841739260 +0530
@@ -47,6 +84,58 @@ diff -urN vsomeip-2.10.21/implementation/endpoints/src/credentials.cpp vsomeip/i
  
  #include <sys/socket.h>
  
+diff -urN vsomeip-2.10.21/implementation/endpoints/src/local_client_endpoint_impl.cpp vsomeip/implementation/endpoints/src/local_client_endpoint_impl.cpp
+--- vsomeip-2.10.21/implementation/endpoints/src/local_client_endpoint_impl.cpp	2018-05-22 15:26:47.000000000 +0530
++++ vsomeip/implementation/endpoints/src/local_client_endpoint_impl.cpp	2018-12-28 17:01:57.972509001 +0530
+@@ -120,7 +120,7 @@
+             socket_->connect(remote_, its_connect_error);
+ 
+ // Credentials
+-#ifndef _WIN32
++#if !defined(_WIN32) && !defined(__QNX__)
+             if (!its_connect_error) {
+                 auto its_host = host_.lock();
+                 if (its_host) {
+Binary files vsomeip-2.10.21/implementation/endpoints/src/.local_client_endpoint_impl.cpp.swp and vsomeip/implementation/endpoints/src/.local_client_endpoint_impl.cpp.swp differ
+diff -urN vsomeip-2.10.21/implementation/endpoints/src/local_server_endpoint_impl.cpp vsomeip/implementation/endpoints/src/local_server_endpoint_impl.cpp
+--- vsomeip-2.10.21/implementation/endpoints/src/local_server_endpoint_impl.cpp	2018-05-22 15:26:47.000000000 +0530
++++ vsomeip/implementation/endpoints/src/local_server_endpoint_impl.cpp	2018-12-28 16:52:48.618665811 +0530
+@@ -19,7 +19,7 @@
+ #include "../../configuration/include/configuration.hpp"
+ 
+ // Credentials
+-#ifndef _WIN32
++#if !defined(_WIN32) && !defined(__QNX__)
+ #include "../include/credentials.hpp"
+ #endif
+ 
+@@ -47,7 +47,7 @@
+     acceptor_.listen(boost::asio::socket_base::max_connections, ec);
+     boost::asio::detail::throw_error(ec, "acceptor listen");
+ 
+-#ifndef _WIN32
++#if !defined(_WIN32) && !defined(__QNX__)
+     if (_host->get_configuration()->is_security_enabled()) {
+         credentials::activate_credentials(acceptor_.native());
+     }
+@@ -71,7 +71,7 @@
+    acceptor_.assign(_local.protocol(), native_socket, ec);
+    boost::asio::detail::throw_error(ec, "acceptor assign native socket");
+ 
+-#ifndef _WIN32
++#if !defined(_WIN32) && !defined(__QNX__)
+     if (_host->get_configuration()->is_security_enabled()) {
+         credentials::activate_credentials(acceptor_.native());
+     }
+@@ -199,7 +199,7 @@
+     }
+ 
+     if (!_error) {
+-#ifndef _WIN32
++#if !defined(_WIN32) && !defined(__QNX__)
+         auto its_host = host_.lock();
+         if (its_host) {
+             if (its_host->get_configuration()->is_security_enabled()) {
 diff -urN vsomeip-2.10.21/implementation/endpoints/src/netlink_connector.cpp vsomeip/implementation/endpoints/src/netlink_connector.cpp
 --- vsomeip-2.10.21/implementation/endpoints/src/netlink_connector.cpp	2018-05-22 15:26:47.000000000 +0530
 +++ vsomeip/implementation/endpoints/src/netlink_connector.cpp	2018-12-28 07:15:13.371502533 +0530

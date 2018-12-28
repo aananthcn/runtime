@@ -7,11 +7,12 @@ SET(CMAKE_C_COMPILER qcc)
 SET(CMAKE_C_COMPILER_TARGET ${arch})
 SET(CMAKE_CXX_COMPILER QCC)
 SET(CMAKE_CXX_COMPILER_TARGET ${arch})
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11 -Wall -Wextra -Wformat -Wformat-security -fexceptions -fstrict-aliasing -fstack-protector -fasynchronous-unwind-tables -fno-omit-frame-pointer -Werror -shared")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wformat -Wformat-security -fexceptions -fstrict-aliasing -fstack-protector -fasynchronous-unwind-tables -fno-omit-frame-pointer -Werror ")
 
 
 SET(Boost_COMPILER -qcc)
-SET(Boost_USE_STATIC_LIBS       	OFF)
+SET(Boost_USE_STATIC_LIBS       	ON)
+SET(Boost_USE_SHARED_LIBS       	OFF)
 SET(Boost_USE_MULTITHREADED    	  	ON)
 SET(Boost_USE_STATIC_RUNTIME    	OFF)
 

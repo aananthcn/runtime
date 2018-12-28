@@ -1,0 +1,20 @@
+set(CMAKE_SYSTEM_NAME QNX)
+
+set(arch gcc_ntox86_64_gpp)
+
+SET(CMAKE_CXX_STANDARD 11)
+SET(CMAKE_C_COMPILER qcc)
+SET(CMAKE_C_COMPILER_TARGET ${arch})
+SET(CMAKE_CXX_COMPILER QCC)
+SET(CMAKE_CXX_COMPILER_TARGET ${arch})
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11 -Wall -Wextra -Wformat -Wformat-security -Wconversion -fexceptions -fstrict-aliasing -fstack-protector -fasynchronous-unwind-tables -fno-omit-frame-pointer -Werror")
+
+SET(Boost_COMPILER -qcc)
+SET(Boost_USE_STATIC_LIBS       	OFF)
+SET(Boost_USE_MULTITHREADED    	  	ON)
+SET(Boost_USE_STATIC_RUNTIME    	OFF)
+
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_CRT_SECURE_NO_WARNINGS /wd4503")
+SET(QNX_TARGET $ENV{QNX_TARGET})
+
+include_directories("include")

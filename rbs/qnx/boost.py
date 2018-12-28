@@ -24,7 +24,7 @@ def compile_package(conf, env, pkg):
               "should be configured with the right compiler (qcc -V flag)!!\n")
 
     try:
-        outstr = subprocess.run('./b2 -j8 install -d2+2 link=shared address-model=64 architecture=x86 threadapi=pthread '
+        outstr = subprocess.run('./b2 -j8 install -d2+2 link=static threading=multi address-model=64 threadapi=pthread '
             + 'abi=aapcs binary-format=elf toolset=qcc cxxflags="-Vgcc_ntox86_64_gpp -shared -std=gnu++11 -lang-c++ -fexceptions" '
             + 'linkflags="-Vgcc_ntox86_64_gpp -std=gnu++11 -fexceptions" archiveflags="-Vgcc_ntox86_64_gpp" target-os=qnxnto '
             + '--without-python --without-context --without-coroutine',

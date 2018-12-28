@@ -19,7 +19,7 @@
 				"path" : "/opt/qnx700/host/linux/x86_64/usr/bin"
 			},
 			"packages" : {
-				"path" : "./packages",
+				"path" : "./packages/qnx",
 				"list" : [
 					{
 						"pkg" : "hello-world",
@@ -51,8 +51,24 @@
 				"path" : ""
 			},
 			"packages" : {
-				"path" : "./packages",
+				"path" : "./packages/linux",
 				"list" : [
+					{
+						"pkg" : "hello-world",
+						"version" : "1.0",
+						"patch" : ""
+					},
+					{
+						"pkg" : "boost",
+						"version" : "1.65.0",
+						"patch" : ""
+					},
+					{
+						"pkg" : "vsomeip",
+						"version" : "2.10.21",
+						"patch" : ""
+					}
+
 				]
 			}
 		}
