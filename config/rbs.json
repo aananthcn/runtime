@@ -29,7 +29,7 @@
 					{
 						"pkg" : "boost",
 						"version" : "1.65.0",
-						"patch" : "./patches/boost/1.65.00/"
+						"patch" : "./patches/boost/1.65.00/qnx"
 					},
 					{
 						"pkg" : "vsomeip",

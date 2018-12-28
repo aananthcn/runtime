@@ -1,0 +1,244 @@
+diff -urN vsomeip-2.10.21/CMakeLists.txt vsomeip/CMakeLists.txt
+--- vsomeip-2.10.21/CMakeLists.txt	2018-05-22 15:26:47.000000000 +0530
++++ vsomeip/CMakeLists.txt	2018-12-27 19:21:32.871114621 +0530
+@@ -77,6 +77,12 @@
+     set(OS_CXX_FLAGS "-pthread")
+ endif (${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
+ 
++if (${CMAKE_SYSTEM_NAME} MATCHES "QNX")
++	set (OS "QNX")
++	set (NO_DEPRECATED_REGISTER "")
++	set (CMAKE_SKIP_BUILD_RPATH TRUE)
++endif (${CMAKE_SYSTEM_NAME} MATCHES "QNX")
++
+ # Signal handling
+ if (ENABLE_SIGNAL_HANDLING)
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DVSOMEIP_ENABLE_SIGNAL_HANDLING")
+@@ -166,6 +172,8 @@
+     set(Boost_LIBRARIES "")
+     link_directories(${Boost_LIBRARY_DIR_DEBUG})
+     ADD_DEFINITIONS( -DBOOST_ALL_DYN_LINK )
++elseif(${CMAKE_SYSTEM_NAME} MATCHES "QNX")
++	set(USE_RT "")
+ else()
+     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D${OS} ${OS_CXX_FLAGS} -DBOOST_LOG_DYN_LINK -g ${OPTIMIZE} -std=c++11 ${NO_DEPRECATED} ${EXPORTSYMBOLS}")
+     set(USE_RT "rt")
+diff -urN vsomeip-2.10.21/implementation/endpoints/include/netlink_connector.hpp vsomeip/implementation/endpoints/include/netlink_connector.hpp
+--- vsomeip-2.10.21/implementation/endpoints/include/netlink_connector.hpp	2018-05-22 15:26:47.000000000 +0530
++++ vsomeip/implementation/endpoints/include/netlink_connector.hpp	2018-12-28 07:21:19.841739260 +0530
+@@ -6,7 +6,7 @@
+ #ifndef VSOMEIP_NETLINK_CONNECTOR_HPP
+ #define VSOMEIP_NETLINK_CONNECTOR_HPP
+ 
+-#ifndef _WIN32
++#if !defined(_WIN32) && !defined(__QNX__)
+ 
+ #include <sys/socket.h>
+ #include <linux/netlink.h>
+diff -urN vsomeip-2.10.21/implementation/endpoints/src/credentials.cpp vsomeip/implementation/endpoints/src/credentials.cpp
+--- vsomeip-2.10.21/implementation/endpoints/src/credentials.cpp	2018-05-22 15:26:47.000000000 +0530
++++ vsomeip/implementation/endpoints/src/credentials.cpp	2018-12-28 07:03:18.402954245 +0530
+@@ -3,7 +3,7 @@
+ // License, v. 2.0. If a copy of the MPL was not distributed with this
+ // file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ 
+-#ifndef _WIN32
++#if !defined(_WIN32) && !defined(__QNX__)
+ 
+ #include <sys/socket.h>
+ 
+diff -urN vsomeip-2.10.21/implementation/endpoints/src/netlink_connector.cpp vsomeip/implementation/endpoints/src/netlink_connector.cpp
+--- vsomeip-2.10.21/implementation/endpoints/src/netlink_connector.cpp	2018-05-22 15:26:47.000000000 +0530
++++ vsomeip/implementation/endpoints/src/netlink_connector.cpp	2018-12-28 07:15:13.371502533 +0530
+@@ -3,7 +3,7 @@
+ // License, v. 2.0. If a copy of the MPL was not distributed with this
+ // file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ 
+-#ifndef _WIN32
++#if !defined(_WIN32) && !defined(__QNX__)
+ 
+ #include <thread>
+ 
+diff -urN vsomeip-2.10.21/implementation/routing/include/routing_manager_impl.hpp vsomeip/implementation/routing/include/routing_manager_impl.hpp
+--- vsomeip-2.10.21/implementation/routing/include/routing_manager_impl.hpp	2018-05-22 15:26:47.000000000 +0530
++++ vsomeip/implementation/routing/include/routing_manager_impl.hpp	2018-12-28 07:22:41.203393791 +0530
+@@ -429,7 +429,7 @@
+     bool routing_running_;
+     std::mutex pending_sd_offers_mutex_;
+     std::vector<std::pair<service_t, instance_t>> pending_sd_offers_;
+-#ifndef _WIN32
++#if !defined(_WIN32) && !defined(__QNX__)
+     std::shared_ptr<netlink_connector> netlink_connector_;
+ #endif
+ 
+diff -urN vsomeip-2.10.21/implementation/routing/src/routing_manager_impl.cpp vsomeip/implementation/routing/src/routing_manager_impl.cpp
+--- vsomeip-2.10.21/implementation/routing/src/routing_manager_impl.cpp	2018-05-22 15:26:47.000000000 +0530
++++ vsomeip/implementation/routing/src/routing_manager_impl.cpp	2018-12-28 07:18:55.913796577 +0530
+@@ -145,7 +145,7 @@
+ }
+ 
+ void routing_manager_impl::start() {
+-#ifndef _WIN32
++#if !defined(_WIN32) && !defined(__QNX__)
+     netlink_connector_ = std::make_shared<netlink_connector>(host_->get_io(),
+             configuration_->get_unicast_address(),
+             boost::asio::ip::address::from_string(configuration_->get_sd_multicast()));
+@@ -204,7 +204,7 @@
+         std::lock_guard<std::mutex> its_lock(version_log_timer_mutex_);
+         version_log_timer_.cancel();
+     }
+-#ifndef _WIN32
++#if !defined(_WIN32) && !defined(__QNX__)
+     {
+         boost::system::error_code ec;
+         std::lock_guard<std::mutex> its_lock(memory_log_timer_mutex_);
+diff -urN vsomeip-2.10.21/implementation/routing/src/routing_manager_stub.cpp vsomeip/implementation/routing/src/routing_manager_stub.cpp
+--- vsomeip-2.10.21/implementation/routing/src/routing_manager_stub.cpp	2018-05-22 15:26:47.000000000 +0530
++++ vsomeip/implementation/routing/src/routing_manager_stub.cpp	2018-12-28 07:44:45.508949433 +0530
+@@ -740,7 +740,7 @@
+ }
+ 
+ void routing_manager_stub::client_registration_func(void) {
+-#ifndef _WIN32
++#if !defined(_WIN32) && !defined(__QNX__)
+     {
+         std::stringstream s;
+         s << std::hex << std::setw(4) << std::setfill('0')
+diff -urN vsomeip-2.10.21/implementation/runtime/src/application_impl.cpp vsomeip/implementation/runtime/src/application_impl.cpp
+--- vsomeip-2.10.21/implementation/runtime/src/application_impl.cpp	2018-05-22 15:26:47.000000000 +0530
++++ vsomeip/implementation/runtime/src/application_impl.cpp	2018-12-28 07:54:16.279914219 +0530
+@@ -9,7 +9,7 @@
+ #include <iostream>
+ #include <boost/log/exceptions.hpp>
+ 
+-#ifndef _WIN32
++#if !defined(_WIN32) && !defined(__QNX__)
+ #include <dlfcn.h>
+ #include <sys/syscall.h>
+ #endif
+@@ -303,7 +303,7 @@
+ }
+ 
+ void application_impl::start() {
+-#ifndef _WIN32
++#if !defined(_WIN32) && !defined(__QNX__)
+     if (getpid() != static_cast<pid_t>(syscall(SYS_gettid))) {
+         // only set threadname if calling thread isn't the main thread
+         std::stringstream s;
+@@ -363,11 +363,11 @@
+                             << std::hex << std::setw(4) << std::setfill('0')
+                             << client_ << " (" << name_ << ") is: " << std::hex
+                             << std::this_thread::get_id()
+-                    #ifndef _WIN32
++                    #if !defined(_WIN32) && !defined(__QNX__)
+                             << " TID: " << std::dec << static_cast<int>(syscall(SYS_gettid))
+                     #endif
+                             ;
+-                    #ifndef _WIN32
++                    #if !defined(_WIN32) && !defined(__QNX__)
+                         {
+                             std::stringstream s;
+                             s << std::hex << std::setw(4) << std::setfill('0')
+@@ -378,7 +378,7 @@
+                     #endif
+                     try {
+                       io_.run();
+-#ifndef _WIN32
++#if !defined(_WIN32) && !defined(__QNX__)
+                     } catch (const boost::log::v2_mt_posix::system_error &e) {
+                         std::cerr << "catched boost::log system_error in I/O thread" << std::endl <<
+                             boost::current_exception_diagnostic_information();
+@@ -412,13 +412,13 @@
+     VSOMEIP_INFO << "io thread id from application: "
+             << std::hex << std::setw(4) << std::setfill('0') << client_ << " ("
+             << name_ << ") is: " << std::hex << std::this_thread::get_id()
+-#ifndef _WIN32
++#if !defined(_WIN32) && !defined(__QNX__)
+             << " TID: " << std::dec << static_cast<int>(syscall(SYS_gettid))
+ #endif
+     ;
+     try {
+         io_.run();
+-#ifndef _WIN32
++#if !defined(_WIN32) && !defined(__QNX__)
+     } catch (const boost::log::v2_mt_posix::system_error &e) {
+         std::cerr << "catched boost::log system_error in I/O thread" << std::endl <<
+             boost::current_exception_diagnostic_information();
+@@ -459,7 +459,8 @@
+ }
+ 
+ void application_impl::stop() {
+-#ifndef _WIN32 // Gives serious problems under Windows.
++// Gives serious problems under Windows.
++#if !defined(_WIN32) && !defined(__QNX__)
+     VSOMEIP_INFO << "Stopping vsomeip application \"" << name_ << "\".";
+ #endif
+     bool block = true;
+@@ -1581,7 +1582,7 @@
+ }
+ 
+ void application_impl::main_dispatch() {
+-#ifndef _WIN32
++#if !defined(_WIN32) && !defined(__QNX__)
+     {
+         std::stringstream s;
+         s << std::hex << std::setw(4) << std::setfill('0')
+@@ -1593,7 +1594,7 @@
+     VSOMEIP_INFO << "main dispatch thread id from application: "
+             << std::hex << std::setw(4) << std::setfill('0') << client_ << " ("
+             << name_ << ") is: " << std::hex << its_id
+-#ifndef _WIN32
++#if !defined(_WIN32) && !defined(__QNX__)
+             << " TID: " << std::dec << static_cast<int>(syscall(SYS_gettid))
+ #endif
+             ;
+@@ -1621,7 +1622,7 @@
+                 reschedule_availability_handler(its_handler);
+                 remove_elapsed_dispatchers();
+ 
+-#ifdef _WIN32
++#if !defined(_WIN32) && !defined(__QNX__)
+                 if(!is_dispatching_) {
+                     its_lock.unlock();
+                     return;
+@@ -1634,7 +1635,7 @@
+ }
+ 
+ void application_impl::dispatch() {
+-#ifndef _WIN32
++#if !defined(_WIN32) && !defined(__QNX__)
+     {
+         std::stringstream s;
+         s << std::hex << std::setw(4) << std::setfill('0')
+@@ -1646,7 +1647,7 @@
+     VSOMEIP_INFO << "dispatch thread id from application: "
+             << std::hex << std::setw(4) << std::setfill('0') << client_ << " ("
+             << name_ << ") is: " << std::hex << its_id
+-#ifndef _WIN32
++#if !defined(_WIN32) && !defined(__QNX__)
+             << " TID: " << std::dec << static_cast<int>(syscall(SYS_gettid))
+ #endif
+             ;
+@@ -1913,11 +1914,11 @@
+     VSOMEIP_INFO << "shutdown thread id from application: "
+             << std::hex << std::setw(4) << std::setfill('0') << client_ << " ("
+             << name_ << ") is: " << std::hex << std::this_thread::get_id()
+-#ifndef _WIN32
++#if !defined(_WIN32) && !defined(__QNX__)
+             << " TID: " << std::dec << static_cast<int>(syscall(SYS_gettid))
+ #endif
+     ;
+-#ifndef _WIN32
++#if !defined(_WIN32) && !defined(__QNX__)
+     boost::asio::detail::posix_signal_blocker blocker;
+     {
+         std::stringstream s;
+@@ -1982,7 +1983,7 @@
+             }
+             io_threads_.clear();
+         }
+-#ifndef _WIN32
++#if !defined(_WIN32) && !defined(__QNX__)
+     } catch (const boost::log::v2_mt_posix::system_error &e) {
+         std::cerr << "catched boost::log system_error in stop thread" << std::endl <<
+             boost::current_exception_diagnostic_information();

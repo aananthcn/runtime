@@ -1,0 +1,50 @@
+diff -urN boost_1_65_0/boost/asio/detail/resolve_endpoint_op.hpp boost/boost/asio/detail/resolve_endpoint_op.hpp
+--- boost_1_65_0/boost/asio/detail/resolve_endpoint_op.hpp	2017-08-19 22:19:39.000000000 +0530
++++ boost/boost/asio/detail/resolve_endpoint_op.hpp	2018-12-28 06:47:41.305448719 +0530
+@@ -29,6 +29,11 @@
+ 
+ #include <boost/asio/detail/push_options.hpp>
+ 
++#if defined(__QNX__)
++#define NI_MAXHOST      1025
++#define NI_MAXSERV      32
++#endif // TODO: to fix compiler error in vsomeip
++
+ namespace boost {
+ namespace asio {
+ namespace detail {
+diff -urN boost_1_65_0/boost/stacktrace/detail/frame_unwind.ipp boost/boost/stacktrace/detail/frame_unwind.ipp
+--- boost_1_65_0/boost/stacktrace/detail/frame_unwind.ipp	2017-08-19 22:19:49.000000000 +0530
++++ boost/boost/stacktrace/detail/frame_unwind.ipp	2018-12-27 13:06:33.909772563 +0530
+@@ -84,7 +84,7 @@
+ std::string frame::name() const {
+ #if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+     ::Dl_info dli;
+-    const bool dl_ok = !!::dladdr(addr_, &dli);
++    const bool dl_ok = !!::dladdr((void*)addr_, &dli);
+     if (dl_ok && dli.dli_sname) {
+         return boost::core::demangle(dli.dli_sname);
+     }
+diff -urN boost_1_65_0/boost/stacktrace/detail/location_from_symbol.hpp boost/boost/stacktrace/detail/location_from_symbol.hpp
+--- boost_1_65_0/boost/stacktrace/detail/location_from_symbol.hpp	2017-08-19 22:19:49.000000000 +0530
++++ boost/boost/stacktrace/detail/location_from_symbol.hpp	2018-12-27 13:06:33.909772563 +0530
+@@ -28,7 +28,7 @@
+     explicit location_from_symbol(const void* addr) BOOST_NOEXCEPT
+         : dli_()
+     {
+-        if (!::dladdr(addr, &dli_)) {
++        if (!::dladdr((void*)addr, &dli_)) {
+             dli_.dli_fname = 0;
+         }
+     }
+diff -urN boost_1_65_0/libs/filesystem/src/operations.cpp boost/libs/filesystem/src/operations.cpp
+--- boost_1_65_0/libs/filesystem/src/operations.cpp	2017-08-19 22:19:40.000000000 +0530
++++ boost/libs/filesystem/src/operations.cpp	2018-12-27 13:06:33.909772563 +0530
+@@ -1541,6 +1541,7 @@
+ #   if defined(AT_FDCWD) && defined(AT_SYMLINK_NOFOLLOW) \
+       && !(defined(__SUNPRO_CC) || defined(__sun) || defined(sun)) \
+       && !(defined(linux) || defined(__linux) || defined(__linux__)) \
++      && !(defined(__QNX__) && (_NTO_VERSION <= 700)) \
+       && !(defined(__MAC_OS_X_VERSION_MIN_REQUIRED) \
+            && __MAC_OS_X_VERSION_MIN_REQUIRED < 101000) \
+       && !(defined(__IPHONE_OS_VERSION_MIN_REQUIRED) \

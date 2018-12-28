@@ -7,7 +7,7 @@ SET(CMAKE_C_COMPILER qcc)
 SET(CMAKE_C_COMPILER_TARGET ${arch})
 SET(CMAKE_CXX_COMPILER QCC)
 SET(CMAKE_CXX_COMPILER_TARGET ${arch})
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11 -Wall -Wextra -Wformat -Wformat-security -Wconversion -fexceptions -fstrict-aliasing -fstack-protector -fasynchronous-unwind-tables -fno-omit-frame-pointer -Werror -shared")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11 -Wall -Wextra -Wformat -Wformat-security -fexceptions -fstrict-aliasing -fstack-protector -fasynchronous-unwind-tables -fno-omit-frame-pointer -Werror -shared")
 
 
 SET(Boost_COMPILER -qcc)
@@ -23,3 +23,4 @@ include_directories("include" "${QNX_TARGET}/usr/include")
 ADD_DEFINITIONS(-D_XOPEN_SOURCE=600)
 ADD_DEFINITIONS(-D_POSIX_C_SOURCE=200112L)
 ADD_DEFINITIONS(-D__EXT_POSIX1_200112=1)
+ADD_DEFINITIONS(-D__EXT_QNX=1)

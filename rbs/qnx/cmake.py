@@ -3,7 +3,7 @@ import subprocess
 
 def get_cmake_config_list(conf, env, domain):
     out_dir = env["OUT_DIR"]
-    inst_arg = "-DCMAKE_INSTALL_PREFIX:PATH="+out_dir
+    inst_arg = "-DCMAKE_INSTALL_PREFIX="+out_dir
     find_arg = "-DCMAKE_FIND_ROOT_PATH="+out_dir
     tool_arg = "-DCMAKE_TOOLCHAIN_FILE="+env["PWD"]+"/config/cmake/qnx7.0.0_x86_64.cmake"
 
