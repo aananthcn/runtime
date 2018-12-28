@@ -104,7 +104,7 @@ def build_domain_packages(conf, domain, pkgs, cmd):
     for pkg in pkgs:
         # identify package type
         print("\nStarting package: " + pkg)
-        print("~" * (18+len(pkg)))
+        print("-" * (18+len(pkg)))
         pkgd = conf["packages"]["path"]+"/"+pkg
         pkgt = get_package_type(pkgd)
         print("Package type: " + pkgt)
@@ -125,18 +125,24 @@ def build_domain_packages(conf, domain, pkgs, cmd):
             if sstate.sstate_check(env, pkg, rbs_func) == False:
                 if rbs_mod.config_package(conf, env, pkg) == True:
                     sstate.sstate_done(env, pkg, rbs_func)
+            else:
+                print("Operation[\"%s\"] for package \"%s\" is skipped as it was done already!" % (rbs_func, pkg))
 
             # compile package
             rbs_func = "compile"
             if sstate.sstate_check(env, pkg, rbs_func) == False:
                 if rbs_mod.compile_package(conf, env, pkg) == True:
                     sstate.sstate_done(env, pkg, rbs_func)
+            else:
+                print("Operation[\"%s\"] for package \"%s\" is skipped as it was done already!" % (rbs_func, pkg))
 
             # install package
             rbs_func = "install"
             if sstate.sstate_check(env, pkg, rbs_func) == False:
                 if rbs_mod.install_package(conf, env, pkg) == True:
                     sstate.sstate_done(env, pkg, rbs_func)
+            else:
+                print("Operation[\"%s\"] for package \"%s\" is skipped as it was done already!" % (rbs_func, pkg))
 
 
 
@@ -145,13 +151,20 @@ def build_packages(conf, cmd):
     for domain in conf["domains"]:
         domain_index += 1
         # identify the packages to be built
+        print("~" * (90))
         print("\nPackages to be built for %s:" % (domain["name"]))
         packages = []
         for item in domain["packages"]["list"]:
             packages.append(item["pkg"])
-        print(packages)
+
+        if len(packages) == 0:
+            print("No package configured for %s domain, skipping..." % (domain["name"]))
+            continue
+        else:
+            print(packages)
 
         build_domain_packages(domain, domain["name"], packages, cmd)
+        print("\n" * 4)
 
 
 if __name__ == '__main__':
@@ -172,9 +185,9 @@ if __name__ == '__main__':
         exit(-1)
 
     # load RBS configuration from JSON file
-    print("Loading %s..." % (sys.argv[1]))
+    print("Loading %s...\n" % (sys.argv[1]))
     rbs_conf = json.load(open(sys.argv[1])) # Load the json file
-    print("")
+    print("~" * (90))
     print("Welcome to RBS - Runtime Build System!")
     rbs_domains = []
     for domain in rbs_conf["domains"]:

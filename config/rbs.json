@@ -51,7 +51,9 @@
 				"path" : ""
 			},
 			"packages" : {
-
+				"path" : "./packages",
+				"list" : [
+				]
 			}
 		}
 	]
