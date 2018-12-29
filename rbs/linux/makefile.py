@@ -12,8 +12,8 @@ def compile_package(conf, env, pkg):
 
     try:
         outstr = subprocess.run(["make", "-C", pkgd], stdout=subprocess.PIPE, env=env).stdout.decode('utf-8')
-    except subprocess.CalledProcessError:
-        print(outstr)
+    except subprocess.CalledProcessError as e:
+        print("\n\nLOG:\n" + e.stdout.decode('utf-8'))
         return False
 
     return True
@@ -25,8 +25,8 @@ def install_package(conf, env, pkg):
 
     try:
         outstr = subprocess.run(["make", "install", "-C", pkgd], stdout=subprocess.PIPE, env=env).stdout.decode('utf-8')
-    except subprocess.CalledProcessError:
-        print(outstr)
+    except subprocess.CalledProcessError as e:
+        print("\n\nLOG:\n" + e.stdout.decode('utf-8'))
         return False
 
     return True

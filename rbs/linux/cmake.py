@@ -4,8 +4,9 @@ import subprocess
 def get_cmake_config_list(conf, env, domain):
     out_dir = env["OUT_DIR"]
     inst_arg = "-DCMAKE_INSTALL_PREFIX:PATH="+out_dir
+    find_arg = "-DCMAKE_FIND_ROOT_PATH="+out_dir
 
-    cfg_list = ["cmake", inst_arg, ".."]
+    cfg_list = ["cmake", inst_arg, find_arg, ".."]
     return cfg_list
 
 
@@ -21,8 +22,8 @@ def config_package(conf, env, pkg):
 
     try:
         outstr = subprocess.run(cfg_list, stdout=subprocess.PIPE, check=True, env=env, cwd=build_dir).stdout.decode('utf-8')
-    except subprocess.CalledProcessError:
-        print(outstr)
+    except subprocess.CalledProcessError as e:
+        print("\n\nLOG:\n" + e.stdout.decode('utf-8'))
         return False
 
     return True
@@ -34,9 +35,9 @@ def compile_package(conf, env, pkg):
     build_dir = env["PWD"]+"/"+pkgd+"/build-"+env["DOMAIN"]
 
     try:
-        outstr = subprocess.run(["make", "-j8", "-C", build_dir], check=True, stdout=subprocess.PIPE, env=env).stdout.decode('utf-8')
-    except subprocess.CalledProcessError:
-        print(outstr)
+        outstr = subprocess.run(["make", "-j8", "VERBOSE=1", "-C", build_dir], check=True, stdout=subprocess.PIPE, env=env).stdout.decode('utf-8')
+    except subprocess.CalledProcessError as e:
+        print("\n\nLOG:\n" + e.stdout.decode('utf-8'))
         return False
 
     return True
@@ -49,8 +50,8 @@ def install_package(conf, env, pkg):
 
     try:
         outstr = subprocess.run(["make", "install"], cwd= build_dir, check=True, stdout=subprocess.PIPE, env=env).stdout.decode('utf-8')
-    except subprocess.CalledProcessError:
-        print(outstr)
+    except subprocess.CalledProcessError as e:
+        print("\n\nLOG:\n" + e.stdout.decode('utf-8'))
         return False
 
     return True

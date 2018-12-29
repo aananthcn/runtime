@@ -128,6 +128,8 @@ def build_domain_packages(dconf, domain, pkgs, cmd):
             if sstate.sstate_check(env, pkg, rbs_func) == False:
                 if rbs_mod.config_package(dconf, env, pkg) == True:
                     sstate.sstate_done(env, pkg, rbs_func)
+                else:
+                    exit(-1)
             else:
                 print("Operation[\"%s\"] for package \"%s\" is skipped as it was done already!" % (rbs_func, pkg))
 
@@ -136,6 +138,8 @@ def build_domain_packages(dconf, domain, pkgs, cmd):
             if sstate.sstate_check(env, pkg, rbs_func) == False:
                 if rbs_mod.compile_package(dconf, env, pkg) == True:
                     sstate.sstate_done(env, pkg, rbs_func)
+                else:
+                    exit(-1)
             else:
                 print("Operation[\"%s\"] for package \"%s\" is skipped as it was done already!" % (rbs_func, pkg))
 
@@ -144,6 +148,8 @@ def build_domain_packages(dconf, domain, pkgs, cmd):
             if sstate.sstate_check(env, pkg, rbs_func) == False:
                 if rbs_mod.install_package(dconf, env, pkg) == True:
                     sstate.sstate_done(env, pkg, rbs_func)
+                else:
+                    exit(-1)
             else:
                 print("Operation[\"%s\"] for package \"%s\" is skipped as it was done already!" % (rbs_func, pkg))
 

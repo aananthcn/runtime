@@ -9,8 +9,8 @@ def config_package(conf, env, pkg):
     try:
         outstr = subprocess.run(["./bootstrap.sh", "--prefix="+outd],
                                 stdout=subprocess.PIPE, env=env, cwd=pkgd, check=True)
-    except subprocess.CalledProcessError:
-        print(outstr)
+    except subprocess.CalledProcessError as e:
+        print("\n\nLOG:\n" + e.stdout.decode('utf-8'))
         return False
 
     return True
@@ -25,8 +25,8 @@ def compile_package(conf, env, pkg):
                                 + 'abi=aapcs binary-format=elf toolset=gcc cxxflags="-shared -std=gnu++11 -lang-c++ -fexceptions" '
                                 + 'linkflags="-std=gnu++11 -fexceptions" --without-python --without-context --without-coroutine',
                                 shell=True, check=True, env=env, cwd=pkgd, stdout=subprocess.PIPE).stdout.decode('utf-8')
-    except subprocess.CalledProcessError:
-        print(outstr)
+    except subprocess.CalledProcessError as e:
+        print("\n\nLOG:\n" + e.stdout.decode('utf-8'))
         return False
 
     return True
