@@ -26,7 +26,8 @@ def config_package(conf, env, pkg):
     subprocess.run(["mkdir", "-p", build_dir], stdout=subprocess.PIPE, env=env)
 
     try:
-        outstr = subprocess.run(cfg_list, stdout=subprocess.PIPE, check=True, env=env, cwd=build_dir).stdout.decode('utf-8')
+        outstr = subprocess.run(cfg_list, stdout=subprocess.PIPE, check=True, env=env, cwd=build_dir)
+        print(outstr.stdout.decode('utf-8'))
     except subprocess.CalledProcessError as e:
         print("\n\nLOG:\n" + e.stdout.decode('utf-8'))
         return False
@@ -40,7 +41,8 @@ def compile_package(conf, env, pkg):
     build_dir = env["PWD"]+"/"+pkgd+"/build-"+env["DOMAIN"]
 
     try:
-        outstr = subprocess.run(["make", "-j8", "-C", build_dir], check=True, stdout=subprocess.PIPE, env=env).stdout.decode('utf-8')
+        outstr = subprocess.run(["make", "-j8", "-C", build_dir], check=True, stdout=subprocess.PIPE, env=env)
+        print(outstr.stdout.decode('utf-8'))
     except subprocess.CalledProcessError as e:
         print("\n\nLOG:\n" + e.stdout.decode('utf-8'))
         return False
@@ -54,7 +56,8 @@ def install_package(conf, env, pkg):
     build_dir = env["PWD"]+"/"+pkgd+"/build-"+env["DOMAIN"]
 
     try:
-        outstr = subprocess.run(["make", "install"], cwd= build_dir, check=True, stdout=subprocess.PIPE, env=env).stdout.decode('utf-8')
+        outstr = subprocess.run(["make", "install"], cwd= build_dir, check=True, stdout=subprocess.PIPE, env=env)
+        print(outstr.stdout.decode('utf-8'))
     except subprocess.CalledProcessError as e:
         print("\n\nLOG:\n" + e.stdout.decode('utf-8'))
         return False
@@ -66,5 +69,5 @@ def run_package(conf, env, pkg, cmd):
     print("\n$$ Running %s with command %s" % (pkg, cmd))
     pkgd = conf["packages"]["path"]+"/"+pkg
     build_dir = env["PWD"]+"/"+pkgd+"/build-"+env["DOMAIN"]
-    outstr = subprocess.run(["make", cmd], cwd=build_dir, stdout=subprocess.PIPE, env=env).stdout.decode('utf-8')
-    print(outstr)
+    outstr = subprocess.run(["make", cmd], cwd=build_dir, stdout=subprocess.PIPE, env=env)
+    print(outstr.stdout.decode('utf-8'))

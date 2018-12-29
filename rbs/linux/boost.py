@@ -9,6 +9,7 @@ def config_package(conf, env, pkg):
     try:
         outstr = subprocess.run(["./bootstrap.sh", "--prefix="+outd],
                                 stdout=subprocess.PIPE, env=env, cwd=pkgd, check=True)
+        print(outstr.stdout.decode('utf-8'))
     except subprocess.CalledProcessError as e:
         print("\n\nLOG:\n" + e.stdout.decode('utf-8'))
         return False
@@ -24,7 +25,8 @@ def compile_package(conf, env, pkg):
         outstr = subprocess.run('./b2 -j8 install -d2+2 link=static address-model=64 architecture=x86 threadapi=pthread '
                                 + 'abi=aapcs binary-format=elf toolset=gcc cxxflags="-shared -std=gnu++11 -lang-c++ -fexceptions" '
                                 + 'linkflags="-std=gnu++11 -fexceptions" --without-python --without-context --without-coroutine',
-                                shell=True, check=True, env=env, cwd=pkgd, stdout=subprocess.PIPE).stdout.decode('utf-8')
+                                shell=True, check=True, env=env, cwd=pkgd, stdout=subprocess.PIPE)
+        print(outstr.stdout.decode('utf-8'))
     except subprocess.CalledProcessError as e:
         print("\n\nLOG:\n" + e.stdout.decode('utf-8'))
         return False
@@ -41,7 +43,7 @@ def install_package(conf, env, pkg):
 def run_package(conf, env, pkg, cmd):
     print("\n$$ Running %s with command %s" % (pkg, cmd))
     pkgd = conf["packages"]["path"]+"/"+pkg
-    outstr = subprocess.run(["./b2", cmd], stdout=subprocess.PIPE, env=env, cwd=pkgd).stdout.decode('utf-8')
-    print(outstr)
+    outstr = subprocess.run(["./b2", cmd], stdout=subprocess.PIPE, env=env, cwd=pkgd)
+    print(outstr.stdout.decode('utf-8'))
 
 

@@ -1,0 +1,34 @@
+diff -urN capicxx-someip-runtime-3.1.12.12/CMakeLists.txt capicxx-someip-runtime/CMakeLists.txt
+--- capicxx-someip-runtime-3.1.12.12/CMakeLists.txt	2018-05-22 15:13:53.000000000 +0530
++++ capicxx-someip-runtime/CMakeLists.txt	2018-12-29 10:07:56.605361475 +0530
+@@ -47,7 +47,7 @@
+   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+ endif()
+ 
+-if (MSVC) 
++if (MSVC)
+ # Boost
+ find_package( Boost 1.54 COMPONENTS system thread log REQUIRED )
+ if(Boost_FOUND)
+@@ -73,8 +73,8 @@
+ message(STATUS "MAX_LOG_LEVEL is set to value: ${MAX_LOG_LEVEL}")
+ 
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCOMMONAPI_INTERNAL_COMPILATION")
+-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCOMMONAPI_SOMEIP_VERSION_MAJOR=${LIBCOMMONAPI_SOMEIP_MAJOR_VERSION}") 
+-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCOMMONAPI_SOMEIP_VERSION_MINOR=${LIBCOMMONAPI_SOMEIP_MINOR_VERSION}") 
++set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCOMMONAPI_SOMEIP_VERSION_MAJOR=${LIBCOMMONAPI_SOMEIP_MAJOR_VERSION}")
++set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCOMMONAPI_SOMEIP_VERSION_MINOR=${LIBCOMMONAPI_SOMEIP_MINOR_VERSION}")
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCOMMONAPI_LOGLEVEL=COMMONAPI_LOGLEVEL_${MAX_LOG_LEVEL}")
+ 
+ # Package config module not found message macro
+@@ -109,7 +109,9 @@
+ endforeach ()
+ 
+ ###################################################################################################
+-
++set(CommonAPI_DIR ${CMAKE_INSTALL_PREFIX})
++set(CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX})
++message(STATUS "CommonAPI_DIR: ${CommonAPI_DIR}")
+ if ("${USE_INSTALLED_COMMONAPI}" STREQUAL "ON")
+     FIND_PACKAGE(CommonAPI 3.1.12 REQUIRED CONFIG NO_CMAKE_PACKAGE_REGISTRY)
+ else()
