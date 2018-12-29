@@ -1,0 +1,24 @@
+diff -urN capicxx-core-runtime-3.1.12.4/CMakeLists.txt capicxx-core-runtime/CMakeLists.txt
+--- capicxx-core-runtime-3.1.12.4/CMakeLists.txt	2018-01-25 14:31:22.000000000 +0530
++++ capicxx-core-runtime/CMakeLists.txt	2018-12-28 21:50:15.432662996 +0530
+@@ -101,15 +101,18 @@
+     message("using MSVC Compiler")
+     add_definitions(-DCOMMONAPI_INTERNAL_COMPILATION -DCOMMONAPI_DLL_COMPILATION)
+     add_compile_options(/EHsc /wd4996)
++elseif(${CMAKE_SYSTEM_NAME} MATCHES "QNX")
++    set (OS "QNX")
++    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D${OS} ${OS_CXX_FLAGS} -g ${OPTIMIZE} -std=gnu++11 ${NO_DEPRECATED} ${EXPORTSYMBOLS} -DCOMMONAPI_INTERNAL_COMPILATION")
+ ELSE ()
+     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Wformat -Wformat-security -Wconversion -fexceptions -fstrict-aliasing -fstack-protector -fasynchronous-unwind-tables -fno-omit-frame-pointer -Werror -DCOMMONAPI_INTERNAL_COMPILATION")
+ ENDIF(MSVC)
+ 
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCOMMONAPI_LOGLEVEL=COMMONAPI_LOGLEVEL_${MAX_LOG_LEVEL}")
+- 
++
+ FIND_PACKAGE(PkgConfig)
+ pkg_check_modules(DLT "automotive-dlt >= 2.11")
+-IF(DLT_FOUND) 
++IF(DLT_FOUND)
+     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DUSE_DLT")
+ ENDIF(DLT_FOUND)
+ 

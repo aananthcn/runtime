@@ -22,19 +22,19 @@
 				"path" : "./packages/qnx",
 				"list" : [
 					{
-						"pkg" : "hello-world",
-						"version" : "1.0",
-						"patch" : ""
+						"pkg" : "hello-world", "version" : "1.0", "patch" : ""
 					},
 					{
-						"pkg" : "boost",
-						"version" : "1.65.0",
-						"patch" : "./patches/boost/1.65.00/qnx"
+						"pkg" : "boost", "version" : "1.65.0", "patch" : "./patches/boost/1.65.00/qnx"
 					},
 					{
-						"pkg" : "vsomeip",
-						"version" : "2.10.21",
-						"patch" : "./patches/vsomeip/2.10.21/qnx"
+						"pkg" : "vsomeip", "version" : "2.10.21", "patch" : "./patches/vsomeip/2.10.21/qnx"
+					},
+					{
+						"pkg" : "capicxx-core-runtime", "version" : "3.1.12.4", "patch" : ""
+					},
+					{
+						"pkg" : "capicxx-someip-runtime", "version" : "3.1.12.12", "patch" : ""
 					}
 				]
 			}
@@ -54,21 +54,17 @@
 				"path" : "./packages/linux",
 				"list" : [
 					{
-						"pkg" : "hello-world",
-						"version" : "1.0",
-						"patch" : ""
+						"pkg" : "hello-world", "version" : "1.0", "patch" : ""
 					},
 					{
-						"pkg" : "boost",
-						"version" : "1.65.0",
-						"patch" : ""
+						"pkg" : "boost", "version" : "1.65.0", "patch" : ""
 					},
 					{
-						"pkg" : "vsomeip",
-						"version" : "2.10.21",
-						"patch" : ""
+						"pkg" : "vsomeip", "version" : "2.10.21", "patch" : ""
+					},
+					{
+						"pkg" : "capicxx-core-runtime", "version" : "3.1.12.4", "patch" : ""
 					}
-
 				]
 			}
 		}
