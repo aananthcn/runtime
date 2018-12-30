@@ -3,7 +3,7 @@ import subprocess
 
 
 def sstate_check(env, pkg, func):
-    outdir = env["PWD"]+"/out/"+"/sstate-chk" #folder to check if someone deletes the out folder
+    outdir = env["PWD"]+"/out/"+"/.sstate-chk" #folder to check if someone deletes the out folder
     sstdir = env["TMP_DIR"]+"/sstate"
     domain = env["DOMAIN"]
 

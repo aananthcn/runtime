@@ -15,6 +15,14 @@ supported_domains  = ["Linux", "QNX"]
 
 
 # F U N C T I O N S
+
+def print_domain_separator(domain):
+    print("=" * (90))
+    print("Domain Name: %s" % domain)
+    print("~" * (13+len(domain)))
+
+
+
 def get_package_type(pkgd):
     files = subprocess.run(["ls", pkgd], stdout=subprocess.PIPE).stdout.decode('utf-8').split("\n")
     if "Makefile" in files or "makefile" in files:
@@ -70,6 +78,7 @@ def get_rbs_module_for_build(pkgt, domain):
         exit(-1)
 
     # identify the right module to make future function calls
+    rbs_mod = None
     if pkgt == "makefile":
         if domain == "QNX":
             from qnx import makefile as rbs_mod
@@ -91,8 +100,10 @@ def get_rbs_module_for_build(pkgt, domain):
 
 
 def build_domain_packages(dconf, domain, pkgs, cmd):
-    print("\n\nRBS begins for %s..." % (domain))
-    print("=" * (18+len(domain)))
+    print("\n")
+    print("~" * (18+len(domain)))
+    print("RBS begins for %s..." % (domain))
+    print("~" * (18+len(domain)))
     env = prepare_env_n_dir(dconf, domain)
 
     # setup path & domain
@@ -159,8 +170,9 @@ def build_packages(conf, cmd):
     domain_index = -1
     for domain in conf["domains"]:
         domain_index += 1
+        print_domain_separator(domain["name"])
+
         # identify the packages to be built
-        print("~" * (90))
         print("\nPackages to be built for %s:" % (domain["name"]))
         packages = []
         for item in domain["packages"]["list"]:
@@ -196,7 +208,7 @@ if __name__ == '__main__':
     # load RBS configuration from JSON file
     print("Loading %s...\n" % (sys.argv[1]))
     rbs_conf = json.load(open(sys.argv[1])) # Load the json file
-    print("~" * (90))
+    print("=" * (90))
     print("Welcome to RBS - Runtime Build System!")
     rbs_domains = []
     for domain in rbs_conf["domains"]:

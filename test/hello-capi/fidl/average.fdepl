@@ -1,0 +1,17 @@
+import "platform:/plugin/org.genivi.commonapi.someip/deployment/CommonAPI-SOMEIP_deployment_spec.fdepl"
+import "average.fidl"
+
+define org.genivi.commonapi.someip.deployment for interface hellocapi.Average {
+    SomeIpServiceID = 4660
+
+    method findAverage {
+        SomeIpMethodID = 32765
+    }
+}
+
+define org.genivi.commonapi.someip.deployment for provider AverageService {
+    instance hellocapi.Average {
+        InstanceId = "test"
+        SomeIpInstanceID = 22136
+    }
+}
