@@ -4,7 +4,7 @@
 #include <CommonAPI/CommonAPI.hpp>
 #include <AverageProxy.hpp>
 
-using namespace v1::hellocapi;
+using namespace v1::hellosc;
 
 int main() {
     std::shared_ptr < CommonAPI::Runtime > runtime = CommonAPI::Runtime::get();

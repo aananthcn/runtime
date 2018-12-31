@@ -3,6 +3,8 @@ packages
 tmp
 .idea
 __pycache__
+.manager
+framework.info.*
 
 
 # Prerequisites

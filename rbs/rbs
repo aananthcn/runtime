@@ -6,6 +6,7 @@ import subprocess
 import os
 
 import sstate
+import cgen
 
 # G L O B A L   V A R I A B L E S
 rbs_conf = rbs_cmd = ""
@@ -122,6 +123,18 @@ def build_domain_packages(dconf, domain, pkgs, cmd):
             exit(-1)
         pkgt = get_package_type(pkgd)
         print("Package type: " + pkgt)
+
+        # check fidl scripts and do code generation
+        rbs_func = "codegen"
+        cconf = {**rbs_conf["code-gen"], **dconf}
+        if sstate.sstate_check(env, pkg, rbs_func) == False:
+            if cgen.cgen_fidl_package(cconf, env, pkg) == True:
+                sstate.sstate_done(env, pkg, rbs_func)
+            else:
+                exit(-1)
+        else:
+            print("Operation[\"%s\"] for package \"%s\" is skipped as it was done already!" % (rbs_func, pkg))
+
 
         # get module object to make function calls
         rbs_mod = get_rbs_module_for_build(pkgt, domain)

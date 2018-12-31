@@ -7,7 +7,7 @@ message(STATUS "CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}")
 
 include_directories(
      src-gen
-     src-gen/v1/hellocapi
+     src-gen/v1/hellosc
      ${CMAKE_INSTALL_PREFIX}/include
      ${CMAKE_INSTALL_PREFIX}/include/CommonAPI-3.1
 )
@@ -16,23 +16,23 @@ link_directories(
     ${CMAKE_INSTALL_PREFIX}/lib
 )
 
-add_executable(AverageClient
+add_executable(hellosc-client-average
     src/AverageClient.cpp
-    src-gen/v1/hellocapi/AverageSomeIPProxy.cpp
-    src-gen/v1/hellocapi/AverageSomeIPDeployment.cpp
+    src-gen/v1/hellosc/AverageSomeIPProxy.cpp
+    src-gen/v1/hellosc/AverageSomeIPDeployment.cpp
 )
-target_link_libraries(AverageClient CommonAPI CommonAPI-SomeIP vsomeip)
+target_link_libraries(hellosc-client-average CommonAPI CommonAPI-SomeIP vsomeip)
 
-add_executable(AverageService
+add_executable(hellosc-service-average
     src/AverageService.cpp
     src/AverageStubImpl.cpp
-    src-gen/v1/hellocapi/AverageSomeIPStubAdapter.cpp
-    src-gen/v1/hellocapi/AverageStubDefault.cpp
-    src-gen/v1/hellocapi/AverageSomeIPDeployment.cpp
+    src-gen/v1/hellosc/AverageSomeIPStubAdapter.cpp
+    src-gen/v1/hellosc/AverageStubDefault.cpp
+    src-gen/v1/hellosc/AverageSomeIPDeployment.cpp
 )
-target_link_libraries(AverageService CommonAPI CommonAPI-SomeIP vsomeip)
+target_link_libraries(hellosc-service-average CommonAPI CommonAPI-SomeIP vsomeip)
 
-install(TARGETS AverageClient AverageService
+install(TARGETS hellosc-client-average hellosc-service-average
     LIBRARY DESTINATION ${INSTALL_LIB_DIR}
     RUNTIME DESTINATION ${INSTALL_BIN_DIR}
 )

@@ -66,10 +66,15 @@
 						"pkg" : "capicxx-someip-runtime", "version" : "3.1.12.12", "patch" : "./patches/capicxx-someip-runtime/3.1.12.12/linux/"
 					},
 					{
-						"pkg" : "hello-capi", "version" : "1.0", "patch" : ""
+						"pkg" : "hello-sc", "version" : "1.0", "patch" : ""
 					}
 				]
 			}
 		}
-	]
+	],
+	"code-gen" : {
+		"path" : "./cgen",
+		"capi" : "commonapi-generator/commonapi-generator-linux-x86_64",
+		"vsomeip" : "commonapi_someip_generator/commonapi-someip-generator-linux-x86_64"
+	}
 }
