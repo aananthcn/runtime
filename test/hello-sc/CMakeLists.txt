@@ -1,6 +1,13 @@
 cmake_minimum_required(VERSION 2.8)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -std=gnu++11")
+if(${CMAKE_SYSTEM_NAME} MATCHES "QNX")
+    set(OS "QNX")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D${OS} ${OS_CXX_FLAGS} -g ${OPTIMIZE} -std=gnu++11 ${NO_DEPRECATED} ${EXPORTSYMBOLS}")
+else()
+    set(OS "LINUX")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -std=gnu++11")
+endif(${CMAKE_SYSTEM_NAME} MATCHES "QNX")
+
 set(INSTALL_LIB_DIR ${CMAKE_INSTALL_PREFIX}/lib)
 set(INSTALL_BIN_DIR ${CMAKE_INSTALL_PREFIX}/bin)
 message(STATUS "CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}")

@@ -1,5 +1,5 @@
-#ifndef HELLOWORLDSTUBIMPL_H_
-#define HELLOWORLDSTUBIMPL_H_
+#ifndef AVERAGESTUBIMPL_H
+#define AVERAGESTUBIMPL_H
 
 #include <CommonAPI/CommonAPI.hpp>
 #include <AverageStubDefault.hpp>
@@ -11,4 +11,4 @@ public:
     virtual void findAverage(const std::shared_ptr<CommonAPI::ClientId> _client, int n1, int n2, findAverageReply_t _return);
 };
 
-#endif /* HELLOWORLDSTUBIMPL_H_ */
+#endif /* AVERAGESTUBIMPL_H */

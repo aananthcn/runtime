@@ -8,7 +8,7 @@ interface Average {
       Int32 b
     }
     out {
-      Int32 average
+      Double average
     }
   }
 }

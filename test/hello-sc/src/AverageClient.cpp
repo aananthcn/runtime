@@ -16,11 +16,12 @@ int main() {
     std::cout << "Available..." << std::endl;
 
     CommonAPI::CallStatus callStatus;
-    int32_t n1, n2, returnValue;
+    int32_t n1, n2;
+    double returnValue;
 
-    std::cout << "Enter number 1:";
+    std::cout << "Enter number 1: ";
     std::cin >> n1;
-    std::cout << "Enter number 2:";
+    std::cout << "Enter number 2: ";
     std::cin >> n2;
 
     myProxy->findAverage(n1, n2, callStatus, returnValue);

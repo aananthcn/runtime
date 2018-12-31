@@ -32,6 +32,12 @@
 					},
 					{
 						"pkg" : "capicxx-core-runtime", "version" : "3.1.12.4", "patch" : ""
+					},
+					{
+						"pkg" : "capicxx-someip-runtime", "version" : "3.1.12.12", "patch" : "./patches/capicxx-someip-runtime/3.1.12.12/qnx/"
+					},
+					{
+						"pkg" : "hello-sc", "version" : "1.0", "patch" : ""
 					}
 				]
 			}

@@ -1,0 +1,170 @@
+diff -urN capicxx-someip-runtime-3.1.12.12/CMakeLists.txt capicxx-someip-runtime/CMakeLists.txt
+--- capicxx-someip-runtime-3.1.12.12/CMakeLists.txt	2018-05-22 15:13:53.000000000 +0530
++++ capicxx-someip-runtime/CMakeLists.txt	2018-12-31 13:30:53.028642335 +0530
+@@ -47,7 +47,7 @@
+   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+ endif()
+ 
+-if (MSVC) 
++if (MSVC)
+ # Boost
+ find_package( Boost 1.54 COMPONENTS system thread log REQUIRED )
+ if(Boost_FOUND)
+@@ -65,6 +65,9 @@
+ include_directories( ${Boost_INCLUDE_DIR} )
+ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_CRT_SECURE_NO_WARNINGS /wd4503")
+ link_directories(${Boost_LIBRARY_DIR})
++elseif(${CMAKE_SYSTEM_NAME} MATCHES "QNX")
++    set (OS "QNX")
++    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D${OS} ${OS_CXX_FLAGS} -g ${OPTIMIZE} -std=gnu++11 ${NO_DEPRECATED} ${EXPORTSYMBOLS}")
+ else()
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Wformat -Wformat-security -Wconversion -fexceptions -fstrict-aliasing -fstack-protector -fasynchronous-unwind-tables -fno-omit-frame-pointer -DCOMMONAPI_INTERNAL_COMPILATION -D_GLIBCXX_USE_NANOSLEEP -DBOOST_LOG_DYN_LINK -pthread")
+ endif()
+@@ -73,8 +76,8 @@
+ message(STATUS "MAX_LOG_LEVEL is set to value: ${MAX_LOG_LEVEL}")
+ 
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCOMMONAPI_INTERNAL_COMPILATION")
+-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCOMMONAPI_SOMEIP_VERSION_MAJOR=${LIBCOMMONAPI_SOMEIP_MAJOR_VERSION}") 
+-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCOMMONAPI_SOMEIP_VERSION_MINOR=${LIBCOMMONAPI_SOMEIP_MINOR_VERSION}") 
++set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCOMMONAPI_SOMEIP_VERSION_MAJOR=${LIBCOMMONAPI_SOMEIP_MAJOR_VERSION}")
++set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCOMMONAPI_SOMEIP_VERSION_MINOR=${LIBCOMMONAPI_SOMEIP_MINOR_VERSION}")
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCOMMONAPI_LOGLEVEL=COMMONAPI_LOGLEVEL_${MAX_LOG_LEVEL}")
+ 
+ # Package config module not found message macro
+@@ -110,6 +113,10 @@
+ 
+ ###################################################################################################
+ 
++set(CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX})
++set(CommonAPI_DIR ${CMAKE_INSTALL_PREFIX})
++message(STATUS "CommonAPI_DIR: ${CommonAPI_DIR}")
++
+ if ("${USE_INSTALLED_COMMONAPI}" STREQUAL "ON")
+     FIND_PACKAGE(CommonAPI 3.1.12 REQUIRED CONFIG NO_CMAKE_PACKAGE_REGISTRY)
+ else()
+diff -urN capicxx-someip-runtime-3.1.12.12/include/CommonAPI/SomeIP/Watch.hpp capicxx-someip-runtime/include/CommonAPI/SomeIP/Watch.hpp
+--- capicxx-someip-runtime-3.1.12.12/include/CommonAPI/SomeIP/Watch.hpp	2018-05-22 15:13:53.000000000 +0530
++++ capicxx-someip-runtime/include/CommonAPI/SomeIP/Watch.hpp	2018-12-31 13:56:47.447783536 +0530
+@@ -62,6 +62,9 @@
+ #ifdef _WIN32
+     int pipeFileDescriptors_[2];
+ #else
++    #ifdef __QNX__
++    int pipefd[2];
++    #endif
+     int eventFd_;
+ #endif
+ 
+diff -urN capicxx-someip-runtime-3.1.12.12/src/CommonAPI/SomeIP/InputStream.cpp capicxx-someip-runtime/src/CommonAPI/SomeIP/InputStream.cpp
+--- capicxx-someip-runtime-3.1.12.12/src/CommonAPI/SomeIP/InputStream.cpp	2018-05-22 15:13:53.000000000 +0530
++++ capicxx-someip-runtime/src/CommonAPI/SomeIP/InputStream.cpp	2018-12-28 21:24:05.984308107 +0530
+@@ -7,6 +7,10 @@
+ #include <arpa/inet.h>
+ #endif
+ 
++#if defined(__QNX__)
++#include <arpa/nameser_compat.h>
++#endif
++
+ #include <algorithm>
+ #include <bitset>
+ 
+diff -urN capicxx-someip-runtime-3.1.12.12/src/CommonAPI/SomeIP/OutputStream.cpp capicxx-someip-runtime/src/CommonAPI/SomeIP/OutputStream.cpp
+--- capicxx-someip-runtime-3.1.12.12/src/CommonAPI/SomeIP/OutputStream.cpp	2018-05-22 15:13:53.000000000 +0530
++++ capicxx-someip-runtime/src/CommonAPI/SomeIP/OutputStream.cpp	2018-12-28 21:25:18.525700815 +0530
+@@ -9,6 +9,10 @@
+ #include <arpa/inet.h>
+ #endif
+ 
++#if defined(__QNX__)
++#include <arpa/nameser_compat.h>
++#endif
++
+ #include <algorithm>
+ #include <bitset>
+ 
+diff -urN capicxx-someip-runtime-3.1.12.12/src/CommonAPI/SomeIP/StringEncoder.cpp capicxx-someip-runtime/src/CommonAPI/SomeIP/StringEncoder.cpp
+--- capicxx-someip-runtime-3.1.12.12/src/CommonAPI/SomeIP/StringEncoder.cpp	2018-05-22 15:13:53.000000000 +0530
++++ capicxx-someip-runtime/src/CommonAPI/SomeIP/StringEncoder.cpp	2018-12-28 21:26:06.473202376 +0530
+@@ -5,6 +5,10 @@
+ 
+ #include <CommonAPI/SomeIP/StringEncoder.hpp>
+ 
++#if defined(__QNX__)
++#include <arpa/nameser_compat.h>
++#endif
++
+ namespace CommonAPI {
+ namespace SomeIP {
+ 
+diff -urN capicxx-someip-runtime-3.1.12.12/src/CommonAPI/SomeIP/Watch.cpp capicxx-someip-runtime/src/CommonAPI/SomeIP/Watch.cpp
+--- capicxx-someip-runtime-3.1.12.12/src/CommonAPI/SomeIP/Watch.cpp	2018-05-22 15:13:53.000000000 +0530
++++ capicxx-someip-runtime/src/CommonAPI/SomeIP/Watch.cpp	2018-12-31 13:56:07.619395578 +0530
+@@ -13,8 +13,10 @@
+ #include <ws2tcpip.h>
+ #else
+ #include <unistd.h>
++#if !defined(__QNX__)
+ #include <sys/eventfd.h>
+ #endif
++#endif
+ 
+ #include <CommonAPI/SomeIP/Connection.hpp>
+ 
+@@ -153,6 +155,11 @@
+         WSACleanup();
+     }
+     pollFileDescriptor_.fd = pipeFileDescriptors_[0];
++#elif __QNX__
++    if (pipe(pipefd) == -1) {
++        std::perror("pipe");
++    }
++    pollFileDescriptor_.fd = pipefd[0];
+ #else
+     eventFd_ = eventfd(0, EFD_NONBLOCK | EFD_SEMAPHORE);
+     if (eventFd_ == -1) {
+@@ -178,6 +185,9 @@
+     // cleanup
+     closesocket(pipeFileDescriptors_[0]);
+     WSACleanup();
++#elif __QNX__
++    close(pipefd[0]);
++    close(pipefd[1]);
+ #else
+     close(eventFd_);
+ #endif
+@@ -236,6 +246,17 @@
+             printf("send failed with error: %d\n", error);
+         }
+     }
++#elif __QNX__
++    char sendbuf[8];
++
++    strcpy(sendbuf, "1");
++    while (write(pipefd[1], sendbuf, strlen(sendbuf))) {
++        if (errno != EAGAIN && errno != EINTR) {
++            std::perror(__func__);
++            break;
++        }
++        std::this_thread::yield();
++    }
+ #else
+     while (write(eventFd_, &eventFdValue_, sizeof(eventFdValue_)) == -1) {
+         if (errno != EAGAIN && errno != EINTR) {
+@@ -264,6 +285,16 @@
+     else {
+         printf("recv failed with error: %d\n", WSAGetLastError());
+     }
++#elif __QNX__
++    char recvbuf[8];
++    int recvbuflen = 1;
++    while (read(pipefd[0], recvbuf, recvbuflen) == -1) {
++        if (errno != EAGAIN && errno != EINTR) {
++            std::perror(__func__);
++            break;
++        }
++        std::this_thread::yield();
++    }
+ #else
+     std::uint64_t readValue(0);
+     while (read(eventFd_, &readValue, sizeof(readValue)) == -1) {
