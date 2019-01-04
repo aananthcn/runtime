@@ -54,7 +54,8 @@ def out_folder_paths(domain, pwd):
     out_dir = pwd + "/out/" + domain
     bin_dir = out_dir + "/bin/"
     lib_dir = out_dir + "/lib/"
-    return tmp_dir, out_dir, bin_dir, lib_dir
+    etc_dir = out_dir + "/etc/"
+    return tmp_dir, out_dir, bin_dir, lib_dir, etc_dir
 
 
 def prepare_env_n_dir(conf, domain):
@@ -64,12 +65,18 @@ def prepare_env_n_dir(conf, domain):
         env[v] = conf["toolchain"]["env"][v]
 
     # create out folders and to env variable
-    tmp_dir, out_dir, bin_dir, lib_dir = out_folder_paths(domain, env["PWD"])
-    subprocess.run(["mkdir", "-p", tmp_dir, bin_dir, lib_dir])
+    tmp_dir, out_dir, bin_dir, lib_dir, etc_dir = out_folder_paths(domain, env["PWD"])
+    subprocess.run(["mkdir", "-p", tmp_dir, bin_dir, lib_dir, etc_dir])
     env["OUT_DIR"] = out_dir
     env["BIN_DIR"] = bin_dir
     env["LIB_DIR"] = lib_dir
     env["TMP_DIR"] = tmp_dir
+    env["ETC_DIR"] = etc_dir
+
+    # copy target configurations
+    source_cfg_dir = env["PWD"] + "/config-target/" + domain + "/*"
+    subprocess.run(["cp -r " + source_cfg_dir + " " + etc_dir], shell=True)
+
     return env
 
 

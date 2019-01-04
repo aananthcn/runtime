@@ -19,7 +19,7 @@
 				"path" : "/opt/qnx700/host/linux/x86_64/usr/bin"
 			},
 			"packages" : {
-				"path" : "./packages/qnx",
+				"path" : "./packages/QNX",
 				"list" : [
 					{
 						"pkg" : "hello-world", "version" : "1.0", "patch" : ""
@@ -54,7 +54,7 @@
 				"path" : ""
 			},
 			"packages" : {
-				"path" : "./packages/linux",
+				"path" : "./packages/Linux",
 				"list" : [
 					{
 						"pkg" : "hello-world", "version" : "1.0", "patch" : ""
