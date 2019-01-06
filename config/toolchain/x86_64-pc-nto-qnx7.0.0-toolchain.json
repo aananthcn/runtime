@@ -1,4 +1,5 @@
 {
+	"arch" : "x86_64",
 	"base" : "/opt/qnx700/",
 	"env": {
 		"QNX_BASE" : "/opt/qnx700",

@@ -2,9 +2,13 @@ import os
 import subprocess
 
 
+def get_sstate_dir(env):
+    return env["TMP_DIR"]+"/sstate/"+env["ARCH"]+"/"
+
+
 def sstate_check(env, pkg, func):
     outdir = env["PWD"]+"/out/"+"/.sstate-chk" #folder to check if someone deletes the out folder
-    sstdir = env["TMP_DIR"]+"/sstate"
+    sstdir = get_sstate_dir(env)
     domain = env["DOMAIN"]
 
     # if out directory is deleted, then delete sstate cache
@@ -20,7 +24,7 @@ def sstate_check(env, pkg, func):
 
 
 def sstate_done(env, pkg, func):
-    sstdir = env["TMP_DIR"]+"/sstate"
+    sstdir = get_sstate_dir(env)
     domain = env["DOMAIN"]
     cached = sstdir+"/"+domain+"/"+pkg
     cachef = sstdir+"/"+domain+"/"+pkg+"/"+func

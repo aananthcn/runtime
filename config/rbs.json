@@ -5,7 +5,6 @@
 		{
 			"name" : "QNX",
 			"toolchain" : {
-				"arch" : "x86_64",
 				"file" : "./config/toolchain/x86_64-pc-nto-qnx7.0.0-toolchain.json"
 			},
 			"packages" : {
@@ -35,7 +34,6 @@
 		{
 			"name" : "Linux",
 			"toolchain" : {
-				"arch" : "x86_64",
 				"file" : "./config/toolchain/x86_64-pc-linux-toolchain.json"
 			},
 			"packages" : {

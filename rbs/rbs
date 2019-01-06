@@ -49,9 +49,9 @@ def command_check(cmd):
         return False
 
 
-def out_folder_paths(domain, pwd):
+def out_folder_paths(domain, pwd, arch):
     tmp_dir = pwd + "/tmp"
-    out_dir = pwd + "/out/" + domain
+    out_dir = pwd + "/out/" + arch + "/" + domain
     bin_dir = out_dir + "/bin/"
     lib_dir = out_dir + "/lib/"
     etc_dir = out_dir + "/etc/"
@@ -63,8 +63,14 @@ def prepare_env_n_dir(conf, domain, env):
     for v in conf["env"]:
         env[v] = conf["env"][v]
 
+    # get and prepare arch (x86_64, armle-v7 etc) info
+    if len(conf["arch"]) == 0:
+        print("RBS Error: Target Architecture not configured in toolchain!")
+        exit(-1)
+    env["ARCH"] = conf["arch"]
+
     # create out folders and to env variable
-    tmp_dir, out_dir, bin_dir, lib_dir, etc_dir = out_folder_paths(domain, env["PWD"])
+    tmp_dir, out_dir, bin_dir, lib_dir, etc_dir = out_folder_paths(domain, env["PWD"], conf["arch"])
     subprocess.run(["mkdir", "-p", tmp_dir, bin_dir, lib_dir, etc_dir])
     env["OUT_DIR"] = out_dir
     env["BIN_DIR"] = bin_dir
@@ -119,6 +125,7 @@ def build_domain_packages(dconf, domain, pkgs, cmd):
 
     # copy host environment and add the envs from json file
     env = os.environ.copy()
+    toolch_conf = ""
 
     # obtain the toolchain json file before env and dir setup
     if len(dconf["toolchain"]["file"]) > 0:
