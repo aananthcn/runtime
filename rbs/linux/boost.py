@@ -22,7 +22,7 @@ def compile_package(conf, env, pkg):
     pkgd = conf["packages"]["path"]+"/"+pkg
 
     try:
-        outstr = subprocess.run('./b2 -j8 install -d2+2 link=static address-model=64 architecture=x86 threadapi=pthread '
+        outstr = subprocess.run('./b2 -j8 install -d2+2 link=shared address-model=64 architecture=x86 threadapi=pthread '
                                 + 'abi=aapcs binary-format=elf toolset=gcc cxxflags="-shared -std=gnu++11 -lang-c++ -fexceptions" '
                                 + 'linkflags="-std=gnu++11 -fexceptions" --without-python --without-context --without-coroutine',
                                 shell=True, check=True, env=env, cwd=pkgd, stdout=subprocess.PIPE)

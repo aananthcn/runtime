@@ -5,18 +5,8 @@
 		{
 			"name" : "QNX",
 			"toolchain" : {
-				"base" : "/opt/qnx700/",
-				"env": {
-					"QNX_BASE" : "/opt/qnx700",
-					"QNX_HOST" : "/opt/qnx700/host/linux/x86_64",
-					"QNX_TARGET" : "/opt/qnx700/target/qnx7",
-					"MAKEFLAGS" : "-I/opt/qnx700/target/qnx7/usr/include",
-					"LD_LIBRARY_PATH" : "",
-					"CC" : "x86_64-pc-nto-qnx7.0.0-gcc",
-					"LD" : "x86_64-pc-nto-qnx7.0.0-gcc"
-				},
-				"prefix" : "x86_64-pc-nto-qnx7.0.0-",
-				"path" : "/opt/qnx700/host/linux/x86_64/usr/bin"
+				"arch" : "x86_64",
+				"file" : "./config/toolchain/x86_64-pc-nto-qnx7.0.0-toolchain.json"
 			},
 			"packages" : {
 				"path" : "./packages/QNX",
@@ -45,13 +35,8 @@
 		{
 			"name" : "Linux",
 			"toolchain" : {
-				"base" : "/",
-				"env" : {
-					"CC" : "gcc",
-					"LD" : "gcc"
-				},
-				"prefix" : "",
-				"path" : ""
+				"arch" : "x86_64",
+				"file" : "./config/toolchain/x86_64-pc-linux-toolchain.json"
 			},
 			"packages" : {
 				"path" : "./packages/Linux",

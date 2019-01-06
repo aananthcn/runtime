@@ -14,7 +14,7 @@ $ rbs config/rbs.json
 ```
 $ su root
 $ sysctl -w net.inet.ip.forwarding=1
-$ route -n add 224.0.0.0/24 192.168.162.255
+$ route -n add 224.0.0.0/24 172.16.139.255
 $ netstat -r
 
 $ route delete <destination> <gateway>
@@ -27,5 +27,7 @@ $ sudo route add -net 224.0.0.0/4 dev <network_if>
 $ netstat -r (or) route -n
 
 $ sudo route del -net 0.0.0.0 gw 192.168.178.1 netmask 0.0.0.0 dev eth0
+
+$ nc -w 1 -v -u -s 127.0.0.1 224.0.0.1 30490 < hellosc-linux-client.sh
 ```
 

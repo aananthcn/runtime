@@ -58,11 +58,10 @@ def out_folder_paths(domain, pwd):
     return tmp_dir, out_dir, bin_dir, lib_dir, etc_dir
 
 
-def prepare_env_n_dir(conf, domain):
-    # copy host environment and add the envs from json file
-    env = os.environ.copy()
-    for v in conf["toolchain"]["env"]:
-        env[v] = conf["toolchain"]["env"][v]
+def prepare_env_n_dir(conf, domain, env):
+    # copy environment settings from toolchain config to target build env
+    for v in conf["env"]:
+        env[v] = conf["env"][v]
 
     # create out folders and to env variable
     tmp_dir, out_dir, bin_dir, lib_dir, etc_dir = out_folder_paths(domain, env["PWD"])
@@ -117,12 +116,27 @@ def build_domain_packages(dconf, domain, pkgs, cmd):
     print("~" * (18+len(domain)))
     print("RBS begins for %s..." % (domain))
     print("~" * (18+len(domain)))
-    env = prepare_env_n_dir(dconf, domain)
+
+    # copy host environment and add the envs from json file
+    env = os.environ.copy()
+
+    # obtain the toolchain json file before env and dir setup
+    if len(dconf["toolchain"]["file"]) > 0:
+        toolchain_f = env["PWD"] + "/" + dconf["toolchain"]["file"]
+        if not os.path.exists(toolchain_f):
+            print("RBS Error: Check if toolchain file \"%s\" exists!" % (toolchain_f))
+            exit(-1)
+        toolch_conf = json.load(open(toolchain_f))
+    else:
+        print("RBS Error: Toolchain not configured for % domain!" % (domain))
+        exit(-1)
+
+    env = prepare_env_n_dir(toolch_conf, domain, env)
 
     # setup path & domain
     env["DOMAIN"] = domain
-    if len(dconf["toolchain"]["path"]) > 0:
-        env["PATH"] = dconf["toolchain"]["path"] + ":" + env["PATH"]
+    if len(toolch_conf["path"]) > 0:
+        env["PATH"] = toolch_conf["path"] + ":" + env["PATH"]
 
     # build packages for domain (QNX, Linux, ...)
     for pkg in pkgs:

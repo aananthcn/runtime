@@ -1,0 +1,9 @@
+{
+	"base" : "/",
+	"env" : {
+		"CC" : "gcc",
+		"LD" : "gcc"
+	},
+	"prefix" : "",
+	"path" : ""
+}

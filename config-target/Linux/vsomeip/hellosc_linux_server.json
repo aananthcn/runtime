@@ -1,5 +1,5 @@
 {
-   "unicast" : "192.168.162.1",
+   "unicast" : "172.16.139.1",
    "netmask" : "255.255.255.0",
    "logging" :
    {
@@ -19,14 +19,14 @@
    [
       {
          "name" : "default",
-         "unicast" : "192.168.162.1",
+         "unicast" : "172.16.139.1",
          "services" :
          [
             {
                "service" : "1",
                "instance" : "1",
                "protocol" : "someip",
-               "unicast" : "192.168.162.1",
+               "unicast" : "172.16.139.1",
                "unreliable" : "30509"
             }
          ]
