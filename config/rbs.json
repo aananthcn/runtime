@@ -5,7 +5,7 @@
 		{
 			"name" : "QNX",
 			"toolchain" : {
-				"file" : "./config/toolchain/x86_64-pc-nto-qnx7.0.0-toolchain.json"
+				"file" : "./config/toolchain/armle-v7-qnx7.0.0-toolchain.json"
 			},
 			"packages" : {
 				"path" : "./packages/QNX",

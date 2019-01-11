@@ -5,10 +5,11 @@ import json
 import subprocess
 import os
 
-import sstate
+import rbsutils
 import cgen
 
 # G L O B A L   V A R I A B L E S
+print_column_width = 93
 rbs_conf = rbs_cmd = ""
 supported_commands = ["clean", "install"]
 supported_pkgtypes = ["cmake", "makefile", "boost"]
@@ -16,16 +17,13 @@ supported_domains  = ["Linux", "QNX"]
 
 
 # F U N C T I O N S
-def print_build_complete_msg(msg):
-    print("#" * (len(msg)+10))
-    print("##   %s   ##" % (msg))
-    print("#" * (len(msg)+10))
-
-
 def print_domain_separator(domain):
-    print("=" * (90))
+    print("=" * (print_column_width))
     print("Domain Name: %s" % domain)
     print("~" * (13+len(domain)))
+
+    if domain == "QNX":
+        rbsutils.print_banner('Configure "qcc -V5.4.0,gcc_ntoarmv7le_gpp -set-default" or similar for your target!')
 
 
 
@@ -51,11 +49,12 @@ def command_check(cmd):
 
 def out_folder_paths(domain, pwd, arch):
     tmp_dir = pwd + "/tmp"
-    out_dir = pwd + "/out/" + arch + "/" + domain
+    log_dir = tmp_dir + "/log/"
+    out_dir = tmp_dir + "/out/" + arch + "/" + domain
     bin_dir = out_dir + "/bin/"
     lib_dir = out_dir + "/lib/"
     etc_dir = out_dir + "/etc/"
-    return tmp_dir, out_dir, bin_dir, lib_dir, etc_dir
+    return tmp_dir, out_dir, bin_dir, lib_dir, etc_dir, log_dir
 
 
 def prepare_env_n_dir(conf, domain, env):
@@ -70,13 +69,14 @@ def prepare_env_n_dir(conf, domain, env):
     env["ARCH"] = conf["arch"]
 
     # create out folders and to env variable
-    tmp_dir, out_dir, bin_dir, lib_dir, etc_dir = out_folder_paths(domain, env["PWD"], conf["arch"])
+    tmp_dir, out_dir, bin_dir, lib_dir, etc_dir, log_dir = out_folder_paths(domain, env["PWD"], conf["arch"])
     subprocess.run(["mkdir", "-p", tmp_dir, bin_dir, lib_dir, etc_dir])
     env["OUT_DIR"] = out_dir
     env["BIN_DIR"] = bin_dir
     env["LIB_DIR"] = lib_dir
     env["TMP_DIR"] = tmp_dir
     env["ETC_DIR"] = etc_dir
+    env["LOG_DIR"] = log_dir
 
     # copy target configurations
     source_cfg_dir = env["PWD"] + "/config-target/" + domain + "/*"
@@ -160,9 +160,9 @@ def build_domain_packages(dconf, domain, pkgs, cmd):
         # check fidl scripts and do code generation
         rbs_func = "codegen"
         cconf = {**rbs_conf["code-gen"], **dconf}
-        if sstate.sstate_check(env, pkg, rbs_func) == False:
+        if rbsutils.sstate_check(env, pkg, rbs_func) == False:
             if cgen.cgen_fidl_package(cconf, env, pkg) == True:
-                sstate.sstate_done(env, pkg, rbs_func)
+                rbsutils.sstate_done(env, pkg, rbs_func)
             else:
                 exit(-1)
         else:
@@ -182,9 +182,9 @@ def build_domain_packages(dconf, domain, pkgs, cmd):
 
             # configure package
             rbs_func = "config"
-            if sstate.sstate_check(env, pkg, rbs_func) == False:
+            if rbsutils.sstate_check(env, pkg, rbs_func) == False:
                 if rbs_mod.config_package(dconf, env, pkg) == True:
-                    sstate.sstate_done(env, pkg, rbs_func)
+                    rbsutils.sstate_done(env, pkg, rbs_func)
                 else:
                     exit(-1)
             else:
@@ -192,9 +192,9 @@ def build_domain_packages(dconf, domain, pkgs, cmd):
 
             # compile package
             rbs_func = "compile"
-            if sstate.sstate_check(env, pkg, rbs_func) == False:
+            if rbsutils.sstate_check(env, pkg, rbs_func) == False:
                 if rbs_mod.compile_package(dconf, env, pkg) == True:
-                    sstate.sstate_done(env, pkg, rbs_func)
+                    rbsutils.sstate_done(env, pkg, rbs_func)
                 else:
                     exit(-1)
             else:
@@ -202,9 +202,9 @@ def build_domain_packages(dconf, domain, pkgs, cmd):
 
             # install package
             rbs_func = "install"
-            if sstate.sstate_check(env, pkg, rbs_func) == False:
+            if rbsutils.sstate_check(env, pkg, rbs_func) == False:
                 if rbs_mod.install_package(dconf, env, pkg) == True:
-                    sstate.sstate_done(env, pkg, rbs_func)
+                    rbsutils.sstate_done(env, pkg, rbs_func)
                 else:
                     exit(-1)
             else:
@@ -256,7 +256,7 @@ if __name__ == '__main__':
     # load RBS configuration from JSON file
     print("Loading %s...\n" % (sys.argv[1]))
     rbs_conf = json.load(open(sys.argv[1])) # Load the json file
-    print("=" * (90))
+    print("=" * (print_column_width))
     print("Welcome to RBS - Runtime Build System!")
     rbs_domains = []
     for domain in rbs_conf["domains"]:
@@ -265,4 +265,4 @@ if __name__ == '__main__':
 
     # build packages for all domains...
     build_packages(rbs_conf, rbs_cmd)
-    print_build_complete_msg("Build succeeded!")
+    rbsutils.print_banner("Build succeeded!")
