@@ -1,0 +1,15 @@
+{
+	"arch" : "x86_64",
+	"base" : "/opt/qnx/qnx700/",
+	"env": {
+		"QNX_BASE" : "/opt/qnx/qnx700",
+		"QNX_HOST" : "/opt/qnx/qnx700/host/linux/x86_64",
+		"QNX_TARGET" : "/opt/qnx/qnx700/target/qnx7",
+		"MAKEFLAGS" : "-I/opt/qnx/qnx700/target/qnx7/usr/include",
+		"LD_LIBRARY_PATH" : "",
+		"CC" : "x86_64-pc-nto-qnx7.0.0-gcc",
+		"LD" : "x86_64-pc-nto-qnx7.0.0-gcc"
+	},
+	"prefix" : "x86_64-pc-nto-qnx7.0.0-",
+	"path" : "/opt/qnx/qnx700/host/linux/x86_64/usr/bin"
+}

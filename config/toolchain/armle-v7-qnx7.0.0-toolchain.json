@@ -1,0 +1,16 @@
+{
+	"arch" : "armle-v7",
+	"base" : "/opt/qnx/qnx700/",
+	"env": {
+		"QNX_BASE" : "/opt/qnx/qnx700",
+		"QNX_HOST" : "/opt/qnx/qnx700/host/linux/x86_64",
+		"QNX_TARGET" : "/opt/qnx/qnx700/target/qnx7",
+		"MAKEFLAGS" : "-I/opt/qnx/qnx700/target/qnx7/usr/include",
+		"LD_LIBRARY_PATH" : "",
+		"CC" : "qcc",
+		"LD" : "qcc",
+		"CFLAGS" : "-V5.4.0,gcc_ntoarmv7le"
+	},
+	"prefix" : "",
+	"path" : "/opt/qnx/qnx700/host/linux/x86_64/usr/bin"
+}
