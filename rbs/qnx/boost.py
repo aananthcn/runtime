@@ -3,40 +3,15 @@ import rbsutils
 
 from inspect import getframeinfo, stack
 
-def get_compile_cmd_str(env):
-    cmd = ""
-    if env["ARCH"] == "x86_64":
-        cmd = './b2 -j8 install -d2+2 link=static threading=multi address-model=64 threadapi=pthread '\
-        'abi=aapcs binary-format=elf toolset=qcc cxxflags="-Vgcc_ntox86_64_gpp -shared -std=gnu++11 '\
-        '-lang-c++ -fexceptions" linkflags="-Vgcc_ntox86_64_gpp -std=gnu++11 -fexceptions" '\
-        'archiveflags="-Vgcc_ntox86_64_gpp" target-os=qnxnto --without-python --without-context '\
-        '--without-coroutine'
-
-    elif env["ARCH"] == "armle-v7":
-        cmd = './b2 -j8 install -d+2 link=static threading=multi address-model=32 threadapi=pthread '\
-        'abi=aapcs binary-format=elf toolset=qcc cxxflags="-V5.4.0,gcc_ntoarmv7le_gpp -shared -std=gnu++11 '\
-        '-lang-c++ -fexceptions" linkflags="-V5.4.0,gcc_ntoarmv7le_gpp -std=gnu++11 -fexceptions" '\
-        'archiveflags="-V5.4.0,gcc_ntoarmv7le_gpp" target-os=qnxnto --without-python --without-context '\
-        '--without-coroutine'
-
-    else:
-        debug_info = getframeinfo(stack()[1][0])
-        print("RBS Error: Unsupported architecture %s in %s:%s" % (env["ARCH"], debug_info.filename, debug_info.lineno))
-        exit(-1)
-
-    return cmd
-
-
 def config_package(conf, env, pkg):
     print("\n$$ Configuring %s" % pkg)
     pkgd = conf["packages"]["path"]+"/"+pkg
     outd = env["OUT_DIR"]
+    cmd = "./bootstrap.sh --prefix=" + outd
 
     try:
-        print("./bootstrap.sh --prefix="+outd)
-
-        outstr = subprocess.run(["./bootstrap.sh", "--prefix="+outd],
-                                stdout=subprocess.PIPE, env=env, cwd=pkgd, check=True)
+        print(cmd)
+        outstr = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, env=env, cwd=pkgd, check=True)
         logdata = outstr.stdout.decode('utf-8')
         rbsutils.log_data(env, pkg, "config", logdata)
         print(logdata)
@@ -50,6 +25,30 @@ def config_package(conf, env, pkg):
     return True
 
 
+def get_compile_cmd_str(env):
+    cmd = ""
+    if env["ARCH"] == "x86_64":
+        cmd = './b2 -j8 install -d+2 link=static threading=multi address-model=64 threadapi=pthread ' \
+              'abi=aapcs binary-format=elf toolset=qcc cxxflags="-Vgcc_ntox86_64_gpp -shared -std=gnu++11 ' \
+              '-lang-c++ -fexceptions" linkflags="-Vgcc_ntox86_64_gpp -std=gnu++11 -fexceptions" ' \
+              'archiveflags="-Vgcc_ntox86_64_gpp" target-os=qnxnto --without-python --without-context ' \
+              '--without-coroutine'
+
+    elif env["ARCH"] == "armle-v7":
+        cmd = './b2 -j8 install -d+2 link=static threading=multi address-model=32 threadapi=pthread ' \
+              'abi=aapcs binary-format=elf toolset=qcc cxxflags="-V5.4.0,gcc_ntoarmv7le_gpp -shared -std=gnu++11 ' \
+              '-lang-c++ -fexceptions" linkflags="-V5.4.0,gcc_ntoarmv7le_gpp -std=gnu++11 -fexceptions" ' \
+              'archiveflags="-V5.4.0,gcc_ntoarmv7le_gpp" target-os=qnxnto --without-python --without-context ' \
+              '--without-coroutine'
+
+    else:
+        debug_info = getframeinfo(stack()[1][0])
+        print("RBS Error: Unsupported architecture %s in %s:%s" % (env["ARCH"], debug_info.filename, debug_info.lineno))
+        exit(-1)
+
+    return cmd
+
+
 def compile_package(conf, env, pkg):
     print("\n$$ Compiling %s" % (pkg))
     pkgd = conf["packages"]["path"]+"/"+pkg
@@ -61,19 +60,17 @@ def compile_package(conf, env, pkg):
         #    + 'linkflags="-Vgcc_ntox86_64_gpp -std=gnu++11 -fexceptions" archiveflags="-Vgcc_ntox86_64_gpp" target-os=qnxnto '
         #    + '--without-python --without-context --without-coroutine',
         #    shell=True, check=True, env=env, cwd=pkgd, stdout=subprocess.PIPE)
-        print(cmd)
 
+        print(cmd)
         outstr = subprocess.run(cmd, shell=True, check=True, env=env, cwd=pkgd, stdout=subprocess.PIPE)
         logdata = outstr.stdout.decode('utf-8')
         rbsutils.log_data(env, pkg, "compile", logdata)
         print(logdata)
+
     except subprocess.CalledProcessError as e:
         logdata = "\n\nLOG:\n" + e.stdout.decode('utf-8')
-        rbsutils.log_data(env, pkg, "config", logdata)
+        rbsutils.log_data(env, pkg, "compile", logdata)
         print(logdata)
-        # FIXME: unable to solve error building assembly files in context. Even --without-context doesn't solve
-        # return False
-        rbsutils.print_banner("FIXME: unable to solve error building assembly files in context. Even --without-context doesn't solve")
 
     return True
 
