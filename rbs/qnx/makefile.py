@@ -18,7 +18,7 @@ def compile_package(conf, env, pkg):
         logdata = outstr.stdout.decode('utf-8')
         rbsutils.log_data(env, pkg, "compile", logdata)
         print(logdata)
-        if "Error" in outstr and "***" in outstr:
+        if "Error" in logdata and "***" in logdata:
             return False
 
     except subprocess.CalledProcessError as e:

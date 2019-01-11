@@ -47,14 +47,13 @@ def command_check(cmd):
         return False
 
 
-def out_folder_paths(domain, pwd, arch):
-    tmp_dir = pwd + "/tmp"
-    log_dir = tmp_dir + "/log/"
-    out_dir = tmp_dir + "/out/" + arch + "/" + domain
+def domain_folder_paths(domain, pwd, arch):
+    outbase, tmp_dir, log_dir = rbsutils.common_folder_paths(pwd)
+    out_dir = outbase + "/" + domain + "/" + arch
     bin_dir = out_dir + "/bin/"
     lib_dir = out_dir + "/lib/"
     etc_dir = out_dir + "/etc/"
-    return tmp_dir, out_dir, bin_dir, lib_dir, etc_dir, log_dir
+    return out_dir, bin_dir, lib_dir, etc_dir
 
 
 def prepare_env_n_dir(conf, domain, env):
@@ -69,8 +68,9 @@ def prepare_env_n_dir(conf, domain, env):
     env["ARCH"] = conf["arch"]
 
     # create out folders and to env variable
-    tmp_dir, out_dir, bin_dir, lib_dir, etc_dir, log_dir = out_folder_paths(domain, env["PWD"], conf["arch"])
-    subprocess.run(["mkdir", "-p", tmp_dir, bin_dir, lib_dir, etc_dir])
+    outbase, tmp_dir, log_dir = rbsutils.common_folder_paths(env["PWD"])
+    out_dir, bin_dir, lib_dir, etc_dir = domain_folder_paths(domain, env["PWD"], conf["arch"])
+    subprocess.run(["mkdir", "-p", out_dir, bin_dir, lib_dir, etc_dir])
     env["OUT_DIR"] = out_dir
     env["BIN_DIR"] = bin_dir
     env["LIB_DIR"] = lib_dir
@@ -216,6 +216,7 @@ def build_domain_packages(dconf, domain, pkgs, cmd):
 
 
 def build_packages(conf, cmd):
+    rbsutils.sstate_prebuild_check()
     domain_index = -1
     for domain in conf["domains"]:
         domain_index += 1
