@@ -1,0 +1,56 @@
+{
+    "unicast" : "192.168.10.1",
+    "logging" :
+    {
+        "level" : "trace",
+        "console" : "true",
+        "file" : { "enable" : "true", "path" : "/tmp/vsomeip.log" },
+        "dlt" : "false"
+    },
+    "applications" :
+    [
+        {
+            "name" : "hellosc-server",
+            "id" : "60"
+        }
+    ],
+    "services" :
+    [
+        {
+            "service" : "0x1234",
+            "instance" : "0x5678",
+            "protocol" : "someip",
+            "unicast":"192.168.10.1",
+            "unreliable": "30501",
+            "events":[
+                {
+                    "event":"32773",
+                    "is_field":"false",
+                    "is_reliable":"false"
+                }
+            ],
+            "eventgroups":[
+                {
+                    "eventgroup":"1",
+                    "events":["32773"],
+                    "threshold":"0"
+                }
+            ]
+        }
+    ],
+    "routing" : "hellosc-server",
+    "service-discovery" :
+    {
+        "enable" : "true",
+        "multicast" : "224.244.224.245",
+        "port" : "30490",
+        "protocol" : "udp",
+        "initial_delay_min" : "10",
+        "initial_delay_max" : "50",
+        "repetitions_base_delay" : "100",
+        "repetitions_max" : "5",
+        "ttl" : "3",
+        "cyclic_offer_delay" : "2000",
+        "request_response_delay" : "10"
+    }
+}

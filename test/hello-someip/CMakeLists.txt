@@ -13,34 +13,35 @@ set(INSTALL_LIB_DIR ${CMAKE_INSTALL_PREFIX}/lib)
 set(INSTALL_BIN_DIR ${CMAKE_INSTALL_PREFIX}/bin)
 message(STATUS "CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}")
 
+
 include_directories(
-     src-gen
-     src-gen/v1/hellosc
      ${CMAKE_INSTALL_PREFIX}/include
-     ${CMAKE_INSTALL_PREFIX}/include/CommonAPI-3.1
 )
+
 
 link_directories(
     ${CMAKE_INSTALL_PREFIX}/lib
 )
 
-add_executable(hellosc-client-average
-    src/AverageClient.cpp
-    src-gen/v1/hellosc/AverageSomeIPProxy.cpp
-    src-gen/v1/hellosc/AverageSomeIPDeployment.cpp
+find_library(SOMEIP_LIBRARY
+    NAMES vsomeip libvsomeip
+    HINTS "${CMAKE_INSTALL_PREFIX}/lib"
 )
-target_link_libraries(hellosc-client-average CommonAPI CommonAPI-SomeIP vsomeip)
+message(STATUS "SOMEIP Library = ${SOMEIP_LIBRARY}")
 
-add_executable(hellosc-service-average
-    src/AverageService.cpp
-    src/AverageStubImpl.cpp
-    src-gen/v1/hellosc/AverageSomeIPStubAdapter.cpp
-    src-gen/v1/hellosc/AverageStubDefault.cpp
-    src-gen/v1/hellosc/AverageSomeIPDeployment.cpp
+add_executable(hellosomeip-client
+    src/request-client.cpp
 )
-target_link_libraries(hellosc-service-average CommonAPI CommonAPI-SomeIP vsomeip)
+target_link_libraries(hellosomeip-client ${SOMEIP_LIBRARY})
 
-install(TARGETS hellosc-client-average hellosc-service-average
+
+add_executable(hellosomeip-server
+    src/response-server.cpp
+)
+target_link_libraries(hellosomeip-server ${SOMEIP_LIBRARY})
+
+
+install(TARGETS hellosomeip-client hellosomeip-server
     LIBRARY DESTINATION ${INSTALL_LIB_DIR}
     RUNTIME DESTINATION ${INSTALL_BIN_DIR}
 )

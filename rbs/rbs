@@ -79,8 +79,10 @@ def prepare_env_n_dir(conf, domain, env):
     env["LOG_DIR"] = log_dir
 
     # copy target configurations
-    source_cfg_dir = env["PWD"] + "/config-target/" + domain + "/*"
-    subprocess.run(["cp -r " + source_cfg_dir + " " + etc_dir], shell=True)
+    target_cfg_bin = env["PWD"] + "/config-target/" + domain + "/bin/*"
+    target_cfg_etc = env["PWD"] + "/config-target/" + domain + "/etc/*"
+    subprocess.run(["cp -r " + target_cfg_bin + " " + bin_dir], shell=True)
+    subprocess.run(["cp -r " + target_cfg_etc + " " + etc_dir], shell=True)
 
     return env
 

@@ -1,4 +1,4 @@
-package hellosc
+package hellosys
 
 interface Average {
   version {major 1 minor 0}

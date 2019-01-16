@@ -4,7 +4,7 @@
 #include <CommonAPI/CommonAPI.hpp>
 #include <AverageStubDefault.hpp>
 
-class AverageStubImpl : public v1::hellosc::AverageStubDefault {
+class AverageStubImpl : public v1::hellosys::AverageStubDefault {
 public:
     AverageStubImpl();
     virtual ~AverageStubImpl();

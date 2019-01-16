@@ -1,6 +1,6 @@
-diff -urN vsomeip-2.10.21/CMakeLists.txt vsomeip/CMakeLists.txt
+diff -Naur vsomeip-2.10.21/CMakeLists.txt vsomeip/CMakeLists.txt
 --- vsomeip-2.10.21/CMakeLists.txt	2018-05-22 15:26:47.000000000 +0530
-+++ vsomeip/CMakeLists.txt	2018-12-28 17:27:09.336648683 +0530
++++ vsomeip/CMakeLists.txt	2019-01-16 11:56:20.915929857 +0530
 @@ -77,13 +77,19 @@
      set(OS_CXX_FLAGS "-pthread")
  endif (${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
@@ -60,9 +60,9 @@ diff -urN vsomeip-2.10.21/CMakeLists.txt vsomeip/CMakeLists.txt
      # IMPORTANT: Add the vsomeip library to the "export-set"
      EXPORT vsomeipTargets
      RUNTIME DESTINATION "${INSTALL_BIN_DIR}" COMPONENT
-diff -urN vsomeip-2.10.21/implementation/endpoints/include/netlink_connector.hpp vsomeip/implementation/endpoints/include/netlink_connector.hpp
+diff -Naur vsomeip-2.10.21/implementation/endpoints/include/netlink_connector.hpp vsomeip/implementation/endpoints/include/netlink_connector.hpp
 --- vsomeip-2.10.21/implementation/endpoints/include/netlink_connector.hpp	2018-05-22 15:26:47.000000000 +0530
-+++ vsomeip/implementation/endpoints/include/netlink_connector.hpp	2018-12-28 07:21:19.841739260 +0530
++++ vsomeip/implementation/endpoints/include/netlink_connector.hpp	2019-01-16 11:56:20.915929857 +0530
 @@ -6,7 +6,7 @@
  #ifndef VSOMEIP_NETLINK_CONNECTOR_HPP
  #define VSOMEIP_NETLINK_CONNECTOR_HPP
@@ -72,9 +72,9 @@ diff -urN vsomeip-2.10.21/implementation/endpoints/include/netlink_connector.hpp
  
  #include <sys/socket.h>
  #include <linux/netlink.h>
-diff -urN vsomeip-2.10.21/implementation/endpoints/src/credentials.cpp vsomeip/implementation/endpoints/src/credentials.cpp
+diff -Naur vsomeip-2.10.21/implementation/endpoints/src/credentials.cpp vsomeip/implementation/endpoints/src/credentials.cpp
 --- vsomeip-2.10.21/implementation/endpoints/src/credentials.cpp	2018-05-22 15:26:47.000000000 +0530
-+++ vsomeip/implementation/endpoints/src/credentials.cpp	2018-12-28 07:03:18.402954245 +0530
++++ vsomeip/implementation/endpoints/src/credentials.cpp	2019-01-16 11:56:20.915929857 +0530
 @@ -3,7 +3,7 @@
  // License, v. 2.0. If a copy of the MPL was not distributed with this
  // file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -84,9 +84,9 @@ diff -urN vsomeip-2.10.21/implementation/endpoints/src/credentials.cpp vsomeip/i
  
  #include <sys/socket.h>
  
-diff -urN vsomeip-2.10.21/implementation/endpoints/src/local_client_endpoint_impl.cpp vsomeip/implementation/endpoints/src/local_client_endpoint_impl.cpp
+diff -Naur vsomeip-2.10.21/implementation/endpoints/src/local_client_endpoint_impl.cpp vsomeip/implementation/endpoints/src/local_client_endpoint_impl.cpp
 --- vsomeip-2.10.21/implementation/endpoints/src/local_client_endpoint_impl.cpp	2018-05-22 15:26:47.000000000 +0530
-+++ vsomeip/implementation/endpoints/src/local_client_endpoint_impl.cpp	2018-12-28 17:01:57.972509001 +0530
++++ vsomeip/implementation/endpoints/src/local_client_endpoint_impl.cpp	2019-01-16 11:56:20.915929857 +0530
 @@ -120,7 +120,7 @@
              socket_->connect(remote_, its_connect_error);
  
@@ -96,10 +96,9 @@ diff -urN vsomeip-2.10.21/implementation/endpoints/src/local_client_endpoint_imp
              if (!its_connect_error) {
                  auto its_host = host_.lock();
                  if (its_host) {
-Binary files vsomeip-2.10.21/implementation/endpoints/src/.local_client_endpoint_impl.cpp.swp and vsomeip/implementation/endpoints/src/.local_client_endpoint_impl.cpp.swp differ
-diff -urN vsomeip-2.10.21/implementation/endpoints/src/local_server_endpoint_impl.cpp vsomeip/implementation/endpoints/src/local_server_endpoint_impl.cpp
+diff -Naur vsomeip-2.10.21/implementation/endpoints/src/local_server_endpoint_impl.cpp vsomeip/implementation/endpoints/src/local_server_endpoint_impl.cpp
 --- vsomeip-2.10.21/implementation/endpoints/src/local_server_endpoint_impl.cpp	2018-05-22 15:26:47.000000000 +0530
-+++ vsomeip/implementation/endpoints/src/local_server_endpoint_impl.cpp	2018-12-28 16:52:48.618665811 +0530
++++ vsomeip/implementation/endpoints/src/local_server_endpoint_impl.cpp	2019-01-16 11:56:20.915929857 +0530
 @@ -19,7 +19,7 @@
  #include "../../configuration/include/configuration.hpp"
  
@@ -136,9 +135,9 @@ diff -urN vsomeip-2.10.21/implementation/endpoints/src/local_server_endpoint_imp
          auto its_host = host_.lock();
          if (its_host) {
              if (its_host->get_configuration()->is_security_enabled()) {
-diff -urN vsomeip-2.10.21/implementation/endpoints/src/netlink_connector.cpp vsomeip/implementation/endpoints/src/netlink_connector.cpp
+diff -Naur vsomeip-2.10.21/implementation/endpoints/src/netlink_connector.cpp vsomeip/implementation/endpoints/src/netlink_connector.cpp
 --- vsomeip-2.10.21/implementation/endpoints/src/netlink_connector.cpp	2018-05-22 15:26:47.000000000 +0530
-+++ vsomeip/implementation/endpoints/src/netlink_connector.cpp	2018-12-28 07:15:13.371502533 +0530
++++ vsomeip/implementation/endpoints/src/netlink_connector.cpp	2019-01-16 11:56:20.915929857 +0530
 @@ -3,7 +3,7 @@
  // License, v. 2.0. If a copy of the MPL was not distributed with this
  // file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -148,9 +147,9 @@ diff -urN vsomeip-2.10.21/implementation/endpoints/src/netlink_connector.cpp vso
  
  #include <thread>
  
-diff -urN vsomeip-2.10.21/implementation/routing/include/routing_manager_impl.hpp vsomeip/implementation/routing/include/routing_manager_impl.hpp
+diff -Naur vsomeip-2.10.21/implementation/routing/include/routing_manager_impl.hpp vsomeip/implementation/routing/include/routing_manager_impl.hpp
 --- vsomeip-2.10.21/implementation/routing/include/routing_manager_impl.hpp	2018-05-22 15:26:47.000000000 +0530
-+++ vsomeip/implementation/routing/include/routing_manager_impl.hpp	2018-12-28 07:22:41.203393791 +0530
++++ vsomeip/implementation/routing/include/routing_manager_impl.hpp	2019-01-16 11:56:20.915929857 +0530
 @@ -429,7 +429,7 @@
      bool routing_running_;
      std::mutex pending_sd_offers_mutex_;
@@ -160,9 +159,9 @@ diff -urN vsomeip-2.10.21/implementation/routing/include/routing_manager_impl.hp
      std::shared_ptr<netlink_connector> netlink_connector_;
  #endif
  
-diff -urN vsomeip-2.10.21/implementation/routing/src/routing_manager_impl.cpp vsomeip/implementation/routing/src/routing_manager_impl.cpp
+diff -Naur vsomeip-2.10.21/implementation/routing/src/routing_manager_impl.cpp vsomeip/implementation/routing/src/routing_manager_impl.cpp
 --- vsomeip-2.10.21/implementation/routing/src/routing_manager_impl.cpp	2018-05-22 15:26:47.000000000 +0530
-+++ vsomeip/implementation/routing/src/routing_manager_impl.cpp	2018-12-28 07:18:55.913796577 +0530
++++ vsomeip/implementation/routing/src/routing_manager_impl.cpp	2019-01-16 12:01:03.835925944 +0530
 @@ -145,7 +145,7 @@
  }
  
@@ -181,9 +180,18 @@ diff -urN vsomeip-2.10.21/implementation/routing/src/routing_manager_impl.cpp vs
      {
          boost::system::error_code ec;
          std::lock_guard<std::mutex> its_lock(memory_log_timer_mutex_);
-diff -urN vsomeip-2.10.21/implementation/routing/src/routing_manager_stub.cpp vsomeip/implementation/routing/src/routing_manager_stub.cpp
+@@ -4192,6 +4192,8 @@
+ }
+ 
+ void routing_manager_impl::start_ip_routing() {
++    if_state_running_ = true; // from https://github.com/GENIVI/vsomeip/issues/26
++
+     if (discovery_) {
+         discovery_->start();
+     } else {
+diff -Naur vsomeip-2.10.21/implementation/routing/src/routing_manager_stub.cpp vsomeip/implementation/routing/src/routing_manager_stub.cpp
 --- vsomeip-2.10.21/implementation/routing/src/routing_manager_stub.cpp	2018-05-22 15:26:47.000000000 +0530
-+++ vsomeip/implementation/routing/src/routing_manager_stub.cpp	2018-12-28 07:44:45.508949433 +0530
++++ vsomeip/implementation/routing/src/routing_manager_stub.cpp	2019-01-16 11:56:20.919929857 +0530
 @@ -740,7 +740,7 @@
  }
  
@@ -193,9 +201,9 @@ diff -urN vsomeip-2.10.21/implementation/routing/src/routing_manager_stub.cpp vs
      {
          std::stringstream s;
          s << std::hex << std::setw(4) << std::setfill('0')
-diff -urN vsomeip-2.10.21/implementation/runtime/src/application_impl.cpp vsomeip/implementation/runtime/src/application_impl.cpp
+diff -Naur vsomeip-2.10.21/implementation/runtime/src/application_impl.cpp vsomeip/implementation/runtime/src/application_impl.cpp
 --- vsomeip-2.10.21/implementation/runtime/src/application_impl.cpp	2018-05-22 15:26:47.000000000 +0530
-+++ vsomeip/implementation/runtime/src/application_impl.cpp	2018-12-28 07:54:16.279914219 +0530
++++ vsomeip/implementation/runtime/src/application_impl.cpp	2019-01-16 11:56:20.919929857 +0530
 @@ -9,7 +9,7 @@
  #include <iostream>
  #include <boost/log/exceptions.hpp>
