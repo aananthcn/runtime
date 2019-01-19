@@ -3,9 +3,9 @@ import subprocess
 
 
 def common_folder_paths(pwd):
-    tmp_dir = pwd + "/tmp"
+    outbase = pwd + "/out/"
+    tmp_dir = outbase + "/tmp"
     log_dir = tmp_dir + "/log/"
-    outbase = tmp_dir + "/out/"
 
     return outbase, tmp_dir, log_dir
 

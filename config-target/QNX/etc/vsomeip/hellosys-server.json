@@ -1,56 +1,42 @@
 {
+    "comment" : "QNX",
     "unicast" : "192.168.10.1",
     "logging" :
     {
-        "level" : "trace",
+        "level" : "debug",
         "console" : "true",
-        "file" : { "enable" : "true", "path" : "/tmp/vsomeip.log" },
+        "file" : { "enable" : "false", "path" : "/tmp/vsomeip.log" },
         "dlt" : "false"
     },
     "applications" :
     [
         {
-            "name" : "hellosc-server",
-            "id" : "60"
+            "name" : "hellosys-server",
+            "id" : "0x1211"
         }
     ],
     "services" :
     [
         {
-            "service" : "0x1234",
-            "instance" : "0x5678",
-            "protocol" : "someip",
-            "unicast":"192.168.10.1",
-            "unreliable": "30501",
-            "events":[
-                {
-                    "event":"32773",
-                    "is_field":"false",
-                    "is_reliable":"false"
-                }
-            ],
-            "eventgroups":[
-                {
-                    "eventgroup":"1",
-                    "events":["32773"],
-                    "threshold":"0"
-                }
-            ]
+            "service" : "1234",
+            "instance" : "5679",
+            "reliable" : { "port" : "30509", "enable-magic-cookies" : "false" },
+            "unreliable" : "30509"
         }
     ],
-    "routing" : "hellosc-server",
+    "routing" : "hellosys-server",
     "service-discovery" :
     {
         "enable" : "true",
-        "multicast" : "224.244.224.245",
+        "multicast" : "224.224.224.245",
         "port" : "30490",
         "protocol" : "udp",
         "initial_delay_min" : "10",
-        "initial_delay_max" : "50",
-        "repetitions_base_delay" : "100",
-        "repetitions_max" : "5",
+        "initial_delay_max" : "100",
+        "repetitions_base_delay" : "200",
+        "repetitions_max" : "3",
         "ttl" : "3",
         "cyclic_offer_delay" : "2000",
-        "request_response_delay" : "10"
+        "request_response_delay" : "1500"
     }
 }

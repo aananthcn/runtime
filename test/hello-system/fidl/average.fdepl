@@ -2,7 +2,7 @@ import "platform:/plugin/org.genivi.commonapi.someip/deployment/CommonAPI-SOMEIP
 import "average.fidl"
 
 define org.genivi.commonapi.someip.deployment for interface hellosys.Average {
-    SomeIpServiceID = 4660
+    SomeIpServiceID = 1234
 
     method findAverage {
         SomeIpMethodID = 32765
@@ -12,6 +12,6 @@ define org.genivi.commonapi.someip.deployment for interface hellosys.Average {
 define org.genivi.commonapi.someip.deployment for provider AverageService {
     instance hellosys.Average {
         InstanceId = "test"
-        SomeIpInstanceID = 22136
+        SomeIpInstanceID = 5679
     }
 }

@@ -1,40 +1,33 @@
 {
+    "comment" : "Linux",
     "unicast" : "192.168.10.2",
-    "netmask" : "255.255.255.0",
     "logging" :
     {
-        "level" : "trace",
+        "level" : "debug",
         "console" : "true",
-        "file" : { "enable" : "true", "path" : "/tmp/vsomeip.log" },
+        "file" : { "enable" : "false", "path" : "/data/vsomeip.log" },
         "dlt" : "false"
     },
     "applications" :
     [
         {
-            "name" : "hellosc-client",
-            "id" : "2"
+            "name" : "hellosys-client",
+            "id" : "0x1311"
         }
     ],
-    "clients" : [
-        {
-            "service" : "0x1234",
-            "instance" : "0x5678",
-            "unreliable" : [ "30491" ]
-        }
-    ],
-    "routing" : "hellosc-client",
+    "routing" : "hellosys-client",
     "service-discovery" :
     {
         "enable" : "true",
-        "multicast" : "224.244.224.245",
+        "multicast" : "224.224.224.245",
         "port" : "30490",
         "protocol" : "udp",
         "initial_delay_min" : "10",
-        "initial_delay_max" : "50",
-        "repetitions_base_delay" : "100",
-        "repetitions_max" : "5",
+        "initial_delay_max" : "100",
+        "repetitions_base_delay" : "200",
+        "repetitions_max" : "3",
         "ttl" : "3",
         "cyclic_offer_delay" : "2000",
-        "request_response_delay" : "10"
+        "request_response_delay" : "1500"
     }
 }

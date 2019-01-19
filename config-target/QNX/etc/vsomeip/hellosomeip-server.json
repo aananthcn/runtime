@@ -18,8 +18,8 @@
     "services" :
     [
         {
-            "service" : "0x1234",
-            "instance" : "0x5678",
+            "service" : "1234",
+            "instance" : "5678",
             "reliable" : { "port" : "30509", "enable-magic-cookies" : "false" },
             "unreliable" : "30509"
         }
