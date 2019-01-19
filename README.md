@@ -34,14 +34,14 @@ $ sudo route del -net 0.0.0.0 gw 192.168.10.1 netmask 0.0.0.0 dev eth0
 
 
 ## Test Applications
-1. hello-node
-This application a very simple hello-world application, it is meant to check if the cross compilation and installation are working properly.
+1. **hello-node**  
+This application a very simple hello-world application, it is meant to check if the cross compilation and installation are working properly.  
 
-2. hello-someip
-This application sends a raw SOME-IP request from Linux and the QNX client provide a response. This is meant to check if SOME-IP libs are built correctly and routing configurations are done as per the section above.
+2. **hello-someip**  
+This application sends a raw SOME-IP request from Linux and the QNX client provide a response. This is meant to check if SOME-IP libs are built correctly and routing configurations are done as per the section above.  
 
-3. hello-system
-This application is based on Common API. It reads 2 numbers from Linux client and sends them to QNX client. QNX client computes the average of these 2 number and sends it back to Linux client. Linux client prints it. This application is meant to test the Common API & vSomeIP functions across nodes.
+3. **hello-system**  
+This application is based on Common API. It reads 2 numbers from Linux client and sends them to QNX client. QNX client computes the average of these 2 number and sends it back to Linux client. Linux client prints it. This application is meant to test the Common API & vSomeIP functions across nodes.  
 
 
 
