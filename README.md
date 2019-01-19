@@ -41,7 +41,7 @@ This application a very simple hello-world application, it is meant to check if 
 This application sends a raw SOME-IP request from Linux client and the QNX server provide a response. This is meant to check if SOME-IP libs are built correctly and routing configurations are done as per the section above.  
 
 3. **hello-system**  
-This application is based on Common API. It reads 2 numbers from Linux client and sends them to QNX client. QNX client computes the average of these 2 number and sends it back to Linux client. Linux client prints it. This application is meant to test the Common API & vSomeIP functions across nodes.  
+This application is based on Common API. It reads 2 numbers from Linux client and sends them to QNX server. QNX server computes the average of these 2 numbers and send it back to Linux client. Linux client then prints it and exits. This application is meant to test the Common API & vSomeIP functions across nodes.  
 
 
 
